@@ -1475,6 +1475,11 @@ function v13_default_site_settings(): array
         'moto_enabled' => true,
         'trx_enabled' => true,
         'game_history_page_size' => 10,
+        // Lottery result source (dhaniwin bhi yahi bridge use karta hai).
+        // 'off' / 'local' likhne par poora local engine chalega.
+        'lottery_upstream_url' => 'https://api.devlopedwithzayro.site/api/webapi',
+        'lottery_upstream_key' => '',
+        'lottery_upstream_enabled' => '1',
         'admin_theme' => 'neo-dark',
         'support_chat_enabled' => true,
         'license_popup_enabled' => false,

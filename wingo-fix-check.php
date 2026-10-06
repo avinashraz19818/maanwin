@@ -215,6 +215,28 @@ function wfc_h($v): string { return htmlspecialchars((string)$v, ENT_QUOTES, 'UT
 </div>
 
 <div class="card">
+  <h2 style="margin-top:0">Result source (dhaniwin wahi use karta hai)</h2>
+  <?php $up = function_exists('dwl_upstream_status') ? dwl_upstream_status() : null; ?>
+  <?php if (!$up): ?>
+    <p class="bad">Upstream module load nahi hua (api/_lottery_upstream.php purani hai).</p>
+  <?php else: ?>
+    <table>
+      <tr><td>Bridge URL</td><td><code><?= wfc_h($up['url'] !== '' ? $up['url'] : '(off)') ?></code></td></tr>
+      <tr><td>Enabled</td><td class="<?= $up['enabled'] ? 'ok' : 'warn' ?>"><?= $up['enabled'] ? 'haan' : 'NAHI (local engine chal raha hai)' ?></td></tr>
+      <tr><td>API key</td><td><?= $up['keySet'] ? 'set hai' : 'set nahi (bridge bina key bhi chalta hai)' ?></td></tr>
+      <tr><td>Reachable</td><td class="<?= $up['reachable'] ? 'ok' : 'bad' ?>"><?= $up['reachable'] ? 'HAAN — result dhaniwin wale hi aayenge' : 'NAHI' ?></td></tr>
+      <?php if (!empty($up['sample'])): ?>
+      <tr><td>Sample (pichhla period)</td><td>issue <code><?= wfc_h($up['sample']['issue']) ?></code> → number <b><?= wfc_h($up['sample']['premium']) ?></b>, color <code><?= wfc_h($up['sample']['color']) ?></code></td></tr>
+      <?php endif; ?>
+      <?php if (!empty($up['totals'])): ?>
+      <tr><td>Upstream totals</td><td>totalCount <?= (int)$up['totals']['totalCount'] ?> · totalPage <?= (int)$up['totals']['totalPage'] ?></td></tr>
+      <?php endif; ?>
+    </table>
+    <p class="muted" style="margin-bottom:0"><?= wfc_h($up['message']) ?></p>
+  <?php endif; ?>
+</div>
+
+<div class="card">
   <h2 style="margin-top:0">Database</h2>
   <?php if (!$db['connected']): ?>
     <p class="bad">Connection nahi hua: <?= wfc_h($db['error']) ?></p>

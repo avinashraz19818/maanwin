@@ -506,27 +506,31 @@ function dwl_seed(string $seed): int
 /** Deterministic fallback result (bina upstream ke bhi result kabhi nahi badlega). */
 function dwl_default_premium(string $gameCode, string $issueNumber): string
 {
+    // DhaniWin ka apna fallback (api_lottery_default_premium) exactly yahi hai:
+    //   seed = crc32("<gameCode>:<issueNumber>")
+    // Isliye jab upstream (asli provider) na mile, tab bhi result dhaniwin ke
+    // local engine se bilkul match karta hai. (Pehle yahan hamara apna hash
+    // tha, jisse fallback values dhaniwin se alag aati thi.)
     $code = dwl_normalize_game($gameCode);
-    $seed = dwl_seed($code . ':' . $issueNumber);
+    $seed = (int)sprintf('%u', crc32($code . ':' . $issueNumber));
     if (dwl_is_k3($code)) {
         return (string)(($seed % 6) + 1) . (string)((($seed >> 3) % 6) + 1) . (string)((($seed >> 6) % 6) + 1);
     }
     if (dwl_is_d5($code)) {
         $digits = '';
         for ($i = 0; $i < 5; $i++) {
-            $digits .= (string)((($seed >> ($i * 4)) % 10));
+            $digits .= (string)(($seed >> ($i * 3)) % 10);
         }
         return $digits;
     }
     if (dwl_is_moto($code)) {
         $cars = range(1, 10);
-        // deterministic shuffle
-        for ($i = 9; $i > 0; $i--) {
-            $j = ($seed >> ($i % 16)) % ($i + 1);
+        $total = count($cars);
+        for ($i = 0; $i < $total; $i++) {
+            $swap = ($seed + ($i * 7)) % $total;
             $tmp = $cars[$i];
-            $cars[$i] = $cars[$j];
-            $cars[$j] = $tmp;
-            $seed = dwl_seed((string)$seed . $i);
+            $cars[$i] = $cars[$swap];
+            $cars[$swap] = $tmp;
         }
         return implode(',', $cars);
     }
@@ -713,10 +717,18 @@ function dwl_result_for_issue(string $gameCode, string $issueNumber, bool $save 
     if ($conn) {
         $row = dwl_result_row($conn, $code, $issue);
         if ($row && trim((string)$row['premium']) !== '') {
-            $detail = dwl_result_from_premium($code, $issue, (string)$row['premium']);
-            $detail['source'] = 'stored';
-            $detail['id'] = (int)$row['id'];
-            return $detail;
+            $storedSource = strtolower((string)($row['source'] ?? 'auto'));
+            // Local andaza (auto/local) ko upstream ke asli result se replace
+            // hone dete hain — isse purani galat values khud theek ho jaati hain.
+            $isLocalGuess = in_array($storedSource, ['auto', 'local', 'deterministic', 'pending', 'stored'], true);
+            $upstreamOn = function_exists('dwl_upstream_enabled') && dwl_upstream_enabled();
+            if (!($isLocalGuess && $upstreamOn)) {
+                $detail = dwl_result_from_premium($code, $issue, (string)$row['premium']);
+                $detail['source'] = $storedSource !== '' ? $storedSource : 'stored';
+                $detail['id'] = (int)$row['id'];
+                $detail['open_time'] = (int)($row['open_time'] ?? 0);
+                return $detail;
+            }
         }
     }
 
@@ -763,12 +775,21 @@ function dwl_result_for_issue(string $gameCode, string $issueNumber, bool $save 
         }
     }
 
-    // 5. Upstream live provider (agar admin ne URL set kiya ho)
-    if ($premium === '' && function_exists('dwl_upstream_fetch_result')) {
-        $live = dwl_upstream_fetch_result($code, $issue);
-        if ($live !== null && $live !== '') {
-            $premium = (string)$live;
-            $source = 'upstream_live';
+    // 5. Upstream — dhaniwin ka ASLI result source (default: on)
+    if ($premium === '' && function_exists('dwl_upstream_fetch_result_row')) {
+        $allowed = !function_exists('dwl_upstream_issue_lookup_allowed') || dwl_upstream_issue_lookup_allowed($code, $issue);
+        if ($allowed) {
+            if (function_exists('dwl_upstream_issue_lookup_done')) {
+                dwl_upstream_issue_lookup_done();
+            }
+            $live = dwl_upstream_fetch_result_row($code, $issue);
+            if (is_array($live) && (string)($live['premium'] ?? '') !== '') {
+                $premium = (string)$live['premium'];
+                $source = (string)($live['source'] ?? 'remote');
+                if ($source === '') {
+                    $source = 'remote';
+                }
+            }
         }
     }
 
@@ -782,7 +803,7 @@ function dwl_result_for_issue(string $gameCode, string $issueNumber, bool $save 
     $detail['source'] = $source;
 
     if ($conn && $save) {
-        $stored = dwl_store_result($conn, $code, $issue, $detail, $source);
+        $stored = dwl_store_result($conn, $code, $issue, $detail, $source, true);
         if ($stored && trim((string)$stored['premium']) !== '') {
             $again = dwl_result_from_premium($code, $issue, (string)$stored['premium']);
             $again['source'] = $source;
@@ -806,7 +827,7 @@ function dwl_result_row($conn, string $code, string $issue): ?array
 }
 
 /** Result DB me write (idempotent). Existing row ko overwrite nahi karta. */
-function dwl_store_result($conn, string $code, string $issue, array $detail, string $source): ?array
+function dwl_store_result($conn, string $code, string $issue, array $detail, string $source, bool $allowUpdate = false): ?array
 {
     if (!$conn) return null;
     $premium = (string)$detail['premium'];
@@ -835,6 +856,29 @@ function dwl_store_result($conn, string $code, string $issue, array $detail, str
             $stmt->bind_param('ssssssi', $code, $issue, $premium, $number, $color, $big, $sum);
             $stmt->execute();
             $stmt->close();
+        }
+    }
+
+    // Upstream (asli provider) authoritative hai: agar pehle koi local andaza
+    // save ho chuka hai to usko asli value se replace kar dete hain. Admin ke
+    // manual / force / bet-control results ko chhua nahi jaata.
+    if ($allowUpdate) {
+        $current = dwl_result_row($conn, $code, $issue);
+        $protected = ['manual_queue', 'manual', 'force', 'user_control', 'control_win', 'control_lose', 'control_auto_win'];
+        $curSource = strtolower((string)($current['source'] ?? ''));
+        if ($current && !in_array($curSource, $protected, true)) {
+            $diff = (string)$current['premium'] !== $premium
+                || (string)$current['number'] !== $number
+                || (string)$current['color'] !== $color
+                || strtolower((string)$current['source']) !== strtolower($source);
+            if ($diff) {
+                $upd = @$conn->prepare('UPDATE lottery_results SET premium=?, number=?, color=?, big_small=?, sum_value=?, source=? WHERE game_code=? AND issue_number=?');
+                if ($upd) {
+                    $upd->bind_param('ssssisss', $premium, $number, $color, $big, $sum, $source, $code, $issue);
+                    @$upd->execute();
+                    $upd->close();
+                }
+            }
         }
     }
     return dwl_result_row($conn, $code, $issue);
@@ -1321,8 +1365,14 @@ function dwl_history_item(string $gameCode, string $issueNumber, array $result, 
     $tag = $lotteryCode === 'K3' ? $number : $premium;
     $hash = hash('sha256', $code . '|' . $issueNumber . '|' . $tag);
     if ($openTimeMs <= 0) {
-        $window = dwl_issue_window($code, $issueNumber);
-        $openTimeMs = (int)$window['openTime'];
+        // DhaniWin/bridge me openTime = period ka START hota hai.
+        $parsed = dwl_parse_issue($code, $issueNumber);
+        if ($parsed) {
+            $openTimeMs = (int)$parsed['start_ts'] * 1000;
+        } else {
+            $window = dwl_issue_window($code, $issueNumber);
+            $openTimeMs = (int)$window['openTime'];
+        }
     }
     $block = 84600000 + ((int)substr(preg_replace('/\D+/', '', $issueNumber) ?: '0', -7) % 900000);
 
@@ -1337,8 +1387,10 @@ function dwl_history_item(string $gameCode, string $issueNumber, array $result, 
         'number' => $number,
         'numberValue' => $number,
         'resultNumber' => $number,
-        'result' => $lotteryCode === 'K3' ? $number : $premium,
-        'openCode' => $lotteryCode === 'K3' ? $number : $premium,
+        // DhaniWin: result/openCode = asli draw (K3 "4,6,6"), number = number/sum.
+        'result' => $premium,
+        'openCode' => $premium,
+        'diceRaw' => $premium,
         'dice' => $lotteryCode === 'K3' ? array_map('intval', str_split(preg_replace('/\D+/', '', $number) ?: '0')) : ($result['dice'] ?? []),
         'color' => $color,
         'colour' => $color,
@@ -1365,20 +1417,39 @@ function dwl_history_page(string $gameCode, int $pageNo = 1, int $pageSize = 10)
     $pageSize = max(1, min(100, $pageSize));
     $offset = ($pageNo - 1) * $pageSize;
 
+    // 0) Upstream (dhaniwin ka asli source) se pehle is page ka data sync karo.
+    //    Ye rows apne DB me bhi likh deta hai, isliye neeche ke loop ke lookups
+    //    DB se hi hote hain (koi extra HTTP call nahi).
+    if (function_exists('dwl_upstream_fetch_history')) {
+        dwl_upstream_fetch_history($code, $pageNo, $pageSize);
+    }
+
     $list = [];
     for ($i = 0; $i < $pageSize; $i++) {
         $issue = dwl_issue_by_offset($code, $offset + $i);
         $result = dwl_result_for_issue($code, $issue, true);
-        $list[] = dwl_history_item($code, $issue, $result);
+        $list[] = dwl_history_item($code, $issue, $result, (int)($result['open_time'] ?? 0));
     }
 
     $totalCount = dwl_history_total($code);
+    $totalPage = (int)max(1, ceil($totalCount / $pageSize));
+    $totals = function_exists('dwl_upstream_totals') ? dwl_upstream_totals($code) : null;
+    if (is_array($totals)) {
+        if ((int)($totals['totalCount'] ?? 0) > 0) {
+            $totalCount = (int)$totals['totalCount'];
+        }
+        if ((int)($totals['totalPage'] ?? 0) > 0 && (int)($totals['pageSize'] ?? 0) === $pageSize) {
+            $totalPage = (int)$totals['totalPage'];
+        } else {
+            $totalPage = (int)max(1, ceil($totalCount / $pageSize));
+        }
+    }
 
     return [
         'list' => $list,
         'pageNo' => $pageNo,
         'pageSize' => $pageSize,
-        'totalPage' => (int)max(1, ceil($totalCount / $pageSize)),
+        'totalPage' => $totalPage,
         'totalCount' => $totalCount,
     ];
 }
@@ -1390,6 +1461,13 @@ function dwl_history_page(string $gameCode, int $pageNo = 1, int $pageSize = 10)
 function dwl_history_total(string $gameCode): int
 {
     $code = dwl_normalize_game($gameCode);
+    // Upstream ke paas asli total hota hai (dhaniwin bhi yahi dikhata hai).
+    if (function_exists('dwl_upstream_totals')) {
+        $totals = dwl_upstream_totals($code);
+        if (is_array($totals) && (int)($totals['totalCount'] ?? 0) > 0) {
+            return (int)$totals['totalCount'];
+        }
+    }
     $start = (string)dwl_setting('lottery_history_start', '2026-01-01 00:00:00');
     $startTs = strtotime($start . ' UTC');
     if (!$startTs) {
@@ -1442,6 +1520,11 @@ function dwl_trend_stats(string $gameCode, int $window = 100): array
 {
     $code = dwl_normalize_game($gameCode);
     $window = max(10, min(100, $window));
+
+    // Ek hi HTTP call me poori window upstream se sync kar lo.
+    if (function_exists('dwl_upstream_fetch_history')) {
+        dwl_upstream_fetch_history($code, 1, $window);
+    }
 
     $seq = []; // newest -> oldest, har entry = digits ki list
     for ($i = 0; $i < $window; $i++) {

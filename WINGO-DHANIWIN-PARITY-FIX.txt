@@ -64,6 +64,30 @@ Ab sab kuch DhaniWin jaisa hai (live dhaniwin.club9.eu.cc se match karke):
   * /webapi/kv/issue/* aur /WinGo/WinGo_30S.json ab naye draw-router se
     serve hote hain (purane frozen .json files override ho jaate hain)
 
+RESULT BILKUL DHANIWIN WALA (ye asli fix hai)
+---------------------------------------------
+Pehle MaanWin apne local engine se result bana raha tha, isliye period same
+hote hue bhi NUMBER alag aata tha (dhaniwin me 7, maanwin me 2 — aisa).
+
+Ab MaanWin wahi source use karta hai jo DHANIWIN use karta hai:
+      https://api.devlopedwithzayro.site/api/webapi
+Isse ye teen cheezein match karti hain:
+   * history ka har number / colour (dhaniwin se byte-to-byte same)
+   * naye period ka result (settlement usi result par hoti hai)
+   * history ka pager total (dhaniwin jaisa ~2900 pages, pehle 2500 tha)
+Aur GetTrendStatistics / trend tab bhi isi data se banta hai.
+
+Kya-kya local hi rehta hai (bilkul safe):
+   * user, balance, wallet, recharge, withdraw, bet, payout, admin — 100%
+     aapke apne database par. Bahar sirf draw result/history jaati-aati hai.
+   * Bridge band ho jaye to site nahi rukti: turant local engine sambhal
+     leta hai (aur wahi dhaniwin ka fallback formula use hota hai, isliye
+     offline case me bhi numbers match karte hain).
+
+Upstream BAND karna ho (sirf local results):
+   Admin > settings me lottery_upstream_url = off
+   Ya api/_core/config.php me:  define('LOTTERY_UPSTREAM_URL', 'off');
+
 ADMIN PANEL ME NAYA
 -------------------
 Admin > WinGo tab:
@@ -133,8 +157,15 @@ UPLOAD KE BAAD CHECK
    latest number dikhna chahiye, bet lagne par balance turant kam ho aur
    period band hone ke baad win/loss popup + wallet credit aa jaye.
 3) K3 me bhi ek test bet (Odd/Even) — ab sahi record + settle hoga.
-4) WinGo page ka "Trend" (走势) tab: 0-9 wale columns me aane/na aane ki
-   ginti (khali column nahi) dikhni chahiye.
+4) WinGo page ka "Trend" tab: 0-9 wale columns me aane/na aane ki ginti
+   (khali column nahi) dikhni chahiye.
+5) SABSE ZAROORI — result match: WinGo page par jo number aaye usi period ka
+   number dhaniwin.club9.eu.cc par bhi khol kar milayein. Dono same aana
+   chahiye (period ke saath number + colour bhi).
+   wingo-fix-check.php par "Result source" card me Reachable = HAAN dikhna
+   chahiye. Agar NAHI dikhe to dekhein ki hosting se bahar (outbound HTTPS)
+   request ja rahi hai ya nahi — us case me bhi site chalti rahegi (local
+   engine), par results dhaniwin se alag ho sakte hain.
 
 KNOWN COSMETIC (gameplay par koi asar nahi)
 -------------------------------------------
