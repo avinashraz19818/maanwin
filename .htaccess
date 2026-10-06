@@ -36,6 +36,11 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 # Works for both app builds: /webapi/kv/issue/... and /webapi/v/issue/...
 RewriteRule ^webapi/(kv|v)/issue/([A-Za-z0-9_]+)(\.json|\.html)?$ api/_draw_router.php?gameCode=$2 [QSA,L]
 RewriteRule ^(WinGo|TrxWinGo|K3|D5|5D|MotoRace|MotoRacing)/([A-Za-z0-9_]+)/GetHistoryIssuePage(\.json|\.html)?$ api/_draw_router.php?path=$1/$2/GetHistoryIssuePage [QSA,L]
+# NOTE: sirf app ke fetch/XHR ko JSON milna chahiye. Browser jab seedha game page
+# khole/refresh kare (Accept: text/html) to ye rule skip ho kar niche SPA fallback
+# (index.php -> index.html) se app load hona chahiye — warna /WinGo/WinGo_30S
+# refresh karne par raw JSON dikhta hai.
+RewriteCond %{HTTP_ACCEPT} !text/html [NC]
 RewriteRule ^(WinGo|TrxWinGo|K3|D5|5D|MotoRace|MotoRacing)/([A-Za-z0-9_]+)(/GetGameIssue)?(\.json|\.html)?$ api/_draw_router.php?path=$1/$2 [QSA,L]
 
 

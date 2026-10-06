@@ -2,6 +2,38 @@
  MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
 ==========================================================================
 
+SABSE NAYA UPDATE (r6) — 3 cheezein
+----------------------------------
+1) GAME PAGE REFRESH karne par raw JSON dikhta tha (/WinGo/WinGo_30S)
+   Wajah: .htaccess ka extensionless game-rule browser navigation ko bhi JSON
+   de raha tha. Fix: us rule par Accept check lagaya —
+     * browser (Accept: text/html)  -> SPA fallback (index.php -> index.html)
+       yani app load hota hai, JSON nahi
+     * app ke fetch/XHR (Accept me text/html nahi) -> pehle jaisa JSON milta hai
+   Sath hi index.php me <base href="..."> inject kiya gaya hai, taki game page
+   refresh hone par bhi /js /css /assets /img ke relative path sahi khulein
+   (pehle deep link par ye assets /WinGo/js/... ban jaate the).
+
+2) PARTICLES ab PAKKA aayenge (purana cache ho to bhi)
+   * NAYI file js/mnw-win-particles.js — index.php ise HAR page me load karta
+     hai (defer). Yani winning popup khulte hi particles chalte hain, chahe
+     browser me purana js bundle cache me ho.
+   * js/Winning-BwkSUlkB.js me bhi wahi particles + missing .winning-head
+     container hai (lottie win_animation ke liye).
+   * Pehle wala "agar lottie chal raha ho to canvas skip" wala gate HATA diya
+     gaya — ab canvas burst hamesha chalta hai, isliye particles dikhna
+     guaranteed hai (popup ke upar z-index 2147483000).
+
+3) LOTTERY CATEGORY ICONS (top wale WinGo / K3 / 5D cards)
+   * Aapke theme (themes-762379c0.json) ke do file:
+       assets/ar_saas11/lottery_category_active-e1455a13.webp  (active)
+       assets/common/lottery_category-5a8fb116.webp            (default)
+   * Sath hi baaki themes ke liye default icon (naam same, content same):
+       assets/{ar_saas08,blue,darkBlue07,darkPurple,deepOrange,darkRed}/
+       lottery_category-5a8fb116.webp  +  lottery_category.webp
+   * darkRed/darkPurple ke active icons bhi ZIP me hain (jo pehle se repo me the).
+   Extract ke baad icons dikhne lagenge (pehle 404 the).
+
 SABSE NAYA UPDATE (r5) — POPUP KE PARTICLES + MISSING CATEGORY IMAGES
 ----------------------------------------------------------------------
 1) Winning popup ke particles (DhaniWin jaise sparkle/confetti)
@@ -178,7 +210,7 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
 1) cPanel > File Manager > public_html (wahi folder jisme index.html hai).
 2) Purani files ka backup rakh lein (select all > Compress) — optional.
 3) Ye ZIP upload karein aur "Extract" karein -> SAB ko overwrite karne dein.
-   Koi file delete nahi hoti; sirf ye 15 files badalti hain:
+   Koi file delete nahi hoti; sirf ye files badalti hain:
         .htaccess
         api/_router.php
         api/_draw_router.php
@@ -192,6 +224,9 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
         js/Winning-BwkSUlkB.js             (winning popup ke particles)
         assets/ar_saas11/lottery_category_active-e1455a13.webp  (NAYI)
         assets/common/lottery_category-5a8fb116.webp            (NAYI)
+        index.php                          (deep-link refresh + particles load)
+        js/mnw-win-particles.js            (NAYI — popup ke particles)
+        assets/<theme>/lottery_category*.webp (NAYI — baaki themes ke icons)
         wingo-fix-check.php                (NAYI file — deployment check)
         WINGO-DHANIWIN-PARITY-FIX.txt      (ye hi note file)
    `api/_core/config.php` (aapki DB settings) ZIP me JAAN-BOOJH kar nahi hai,
@@ -230,6 +265,8 @@ UPLOAD KE BAAD CHECK
 3) K3 me bhi ek test bet (Odd/Even) — ab sahi record + settle hoga.
 4) WinGo page ka "Trend" tab: 0-9 wale columns me aane/na aane ki ginti
    (khali column nahi) dikhni chahiye.
+3b) Game page (/WinGo/WinGo_30S) par REFRESH karein — app load hona chahiye,
+   JSON nahi. (Agar JSON hi dikhe to .htaccess purana pada hai — dobara extract.)
 4b) Winning popup: jeetne par popup ke saath orange-gold PARTICLES
    (sparkle burst) dikhne chahiye — dhaniwin jaisa. Agar particles na dikhein
    to Ctrl+Shift+R (hard refresh) ek baar kar lein, purana js cache ho sakta hai.
