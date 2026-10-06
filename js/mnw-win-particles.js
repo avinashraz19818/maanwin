@@ -1,12 +1,16 @@
 /* maanwin-win-particles: winning popup par dhaniwin jaise particles.
-   index.php ise har page me load karta hai (defer). Self-contained, koi dependency nahi. */
-/* MAANWIN win-popup particles (DhaniWin parity) — self contained, no deps */
+   index.php ise har page me load karta hai (defer). Self-contained, koi dependency nahi.
+   Sirf tab chalta hai jab popup actually khula ho (v-show display:none ko chhupata hai). */
+/* MAANWIN win-popup particles (DhaniWin parity) — self contained, no deps.
+   Sirf tab chalta hai jab winning popup actually VISIBLE ho (v-show), aur poora
+   effect app container (#app) ke andar rehta hai. */
 (function () {
   var W = window;
   if (W.__mnwWinFx) return;
   W.__mnwWinFx = 1;
   var COLORS = ["#FF7A2F", "#FFC93C", "#FF2D6F", "#FFF3D0", "#FFFFFF", "#FF9F1C", "#FF4D6D", "#B84DFF"];
   var cv = null, ctx = null, pts = [], raf = 0, pending = 0, seen = null;
+  var host = { left: 0, top: 0, width: 0, height: 0 };
 
   function ensureStyle() {
     if (document.getElementById("mnw-win-fx-style")) return;
@@ -16,8 +20,23 @@
       ".winning-head{position:fixed!important;left:50%!important;transform:translate(-50%,-50%)!important;" +
       "pointer-events:none!important;z-index:2147482000;opacity:.97;height:150px;max-height:40vh;overflow:visible}" +
       ".winning-head svg{overflow:visible}" +
-      "#mnw-win-fx{position:fixed;left:0;top:0;pointer-events:none;z-index:2147483000}";
+      "#mnw-win-fx{position:fixed;pointer-events:none;z-index:2147483000}";
     (document.head || document.documentElement).appendChild(s);
+  }
+
+  function hostRect() {
+    var app = document.getElementById("app");
+    var r = app && app.getBoundingClientRect ? app.getBoundingClientRect() : null;
+    if (r && r.width > 120 && (r.width < W.innerWidth - 24 || r.height < W.innerHeight - 24)) {
+      var left = Math.max(0, r.left), top = Math.max(0, r.top);
+      return {
+        left: left,
+        top: top,
+        width: Math.max(1, Math.min(r.width, W.innerWidth - left)),
+        height: Math.max(1, Math.min(r.height || W.innerHeight, W.innerHeight - top))
+      };
+    }
+    return { left: 0, top: 0, width: W.innerWidth, height: W.innerHeight };
   }
 
   function ensureCanvas() {
@@ -34,11 +53,14 @@
 
   function resize() {
     if (!cv || !ctx) return;
+    host = hostRect();
     var dpr = Math.min(2, W.devicePixelRatio || 1);
-    cv.width = Math.round(W.innerWidth * dpr);
-    cv.height = Math.round(W.innerHeight * dpr);
-    cv.style.width = W.innerWidth + "px";
-    cv.style.height = W.innerHeight + "px";
+    cv.style.left = host.left + "px";
+    cv.style.top = host.top + "px";
+    cv.style.width = host.width + "px";
+    cv.style.height = host.height + "px";
+    cv.width = Math.round(host.width * dpr);
+    cv.height = Math.round(host.height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
@@ -78,7 +100,7 @@
   function frame() {
     raf = 0;
     if (!ctx) return;
-    ctx.clearRect(0, 0, W.innerWidth, W.innerHeight);
+    ctx.clearRect(0, 0, host.width, host.height);
     for (var i = pts.length - 1; i >= 0; i--) {
       var p = pts[i];
       p.age++;
@@ -101,15 +123,30 @@
       ctx.restore();
     }
     if (pts.length) raf = requestAnimationFrame(frame);
-    else ctx.clearRect(0, 0, W.innerWidth, W.innerHeight);
+    else ctx.clearRect(0, 0, host.width, host.height);
   }
 
+  /* popup actually dikh raha hai? v-show sirf display:none lagata hai */
+  function popupVisible(el) {
+    if (!el || !el.isConnected) return false;
+    var cs = null;
+    try { cs = W.getComputedStyle(el); } catch (e) { cs = null; }
+    if (cs) {
+      if (cs.display === "none" || cs.visibility === "hidden" || cs.visibility === "collapse") return false;
+      if (cs.opacity !== "" && parseFloat(cs.opacity) < 0.05) return false;
+    }
+    var r = el.getBoundingClientRect();
+    return r.width > 2 && r.height > 2;
+  }
+
+  function popupEl() { return document.querySelector(".winning"); }
+
   function bodyRect() {
-    var el = document.querySelector(".winning-body") || document.querySelector(".winning-main") || document.querySelector(".winning");
+    var el = document.querySelector(".winning-body") || document.querySelector(".winning-main") || popupEl();
     if (!el) return null;
     var r = el.getBoundingClientRect();
     if (r.width < 2 || r.height < 2) {
-      el = document.querySelector(".winning");
+      el = popupEl();
       if (!el) return null;
       r = el.getBoundingClientRect();
     }
@@ -127,38 +164,42 @@
     return head;
   }
 
-  /* dhaniwin jaisa win burst — popup ke sath hamesha chalta hai */
+  /* dhaniwin jaisa win burst — sirf popup khulne par */
   function burst() {
     var r = bodyRect();
     ensureCanvas();
-    var cx = r ? r.left + r.width / 2 : W.innerWidth / 2;
-    var cy = r ? Math.max(70, r.top + r.height * 0.2) : W.innerHeight * 0.28;
-    spawn(cx, cy, 95, 2.6);
+    var gx = r ? r.left + r.width / 2 : host.left + host.width / 2;
+    var gy = r ? Math.max(host.top + 60, r.top + r.height * 0.2) : host.top + host.height * 0.28;
+    spawn(gx - host.left, gy - host.top, 95, 2.6);
     setTimeout(function () {
-      var r2 = bodyRect();
-      if (r2) spawn(r2.left + r2.width / 2, r2.top + r2.height * 0.45, 55, 3.4);
-      else spawn(W.innerWidth / 2, W.innerHeight * 0.5, 55, 3.4);
+      var r2 = bodyRect(), h = hostRect();
+      host = h;
+      if (r2) spawn(r2.left + r2.width / 2 - h.left, r2.top + r2.height * 0.45 - h.top, 55, 3.4);
+      else spawn(h.width / 2, h.height * 0.5, 55, 3.4);
     }, 240);
     setTimeout(function () {
-      var r3 = bodyRect();
-      if (r3) spawn(r3.left + r3.width * 0.5, r3.top + r3.height * 0.12, 45, 3.0);
-      else spawn(W.innerWidth / 2, W.innerHeight * 0.22, 45, 3.0);
+      var r3 = bodyRect(), h = hostRect();
+      host = h;
+      if (r3) spawn(r3.left + r3.width * 0.5 - h.left, r3.top + r3.height * 0.12 - h.top, 45, 3.0);
+      else spawn(h.width / 2, h.height * 0.22, 45, 3.0);
     }, 620);
   }
 
   function scan() {
-    var w = document.querySelector(".winning");
-    if (!w) { seen = null; return; }
+    var w = popupEl();
+    if (!w || !popupVisible(w)) { seen = null; return; } /* chhupa hua popup = kuch nahi */
     placeHead();
     if (seen === w) return;
     seen = w;
     pts.length = 0;
-    pending = Date.now() + 450;
+    pending = Date.now() + 300;
   }
 
   function check() {
     if (!pending || Date.now() < pending) return;
     pending = 0;
+    var w = popupEl();
+    if (!w || !popupVisible(w)) return;
     placeHead();
     burst();
   }
@@ -167,5 +208,6 @@
   setInterval(function () { scan(); check(); }, 200);
   W.addEventListener("resize", resize);
   W.addEventListener("orientationchange", function () { setTimeout(resize, 200); });
-  scan();
+  if (document.readyState !== "loading") scan();
+  else document.addEventListener("DOMContentLoaded", scan);
 })();

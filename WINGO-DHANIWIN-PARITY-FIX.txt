@@ -2,6 +2,20 @@
  MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
 ==========================================================================
 
+SABSE NAYA UPDATE (r7) — PARTICLES AB SIRF WINNING POPUP KE SATH
+-----------------------------------------------------------------
+Aapne notice kiya: WinGo page kholte hi particles aa jate the (popup se pehle).
+Wajah: Vue ka winning popup DOM me HAMESHA rehta hai — sirf display:none se
+chhupta hai (v-show), aur pehla code usi ko "popup khul gaya" samajh leta tha.
+Fix (js/mnw-win-particles.js + js/Winning-BwkSUlkB.js me):
+  * particles ab SIRF tab chalte hain jab popup actually dikh raha ho
+    (display:none / visibility / opacity / size — sab check hota hai)
+  * popup band hone par state reset -> agla win aane par PHIR naya burst
+    (har baar popup khulne par particles)
+  * canvas ab poori screen ke bajaye app container (#app) ke andar rehta hai,
+    isliye desktop par bhi particles phone frame ke andar hi udte hain
+  * page load par ab koi particle nahi aayega
+
 SABSE NAYA UPDATE (r6) — 3 cheezein
 ----------------------------------
 1) GAME PAGE REFRESH karne par raw JSON dikhta tha (/WinGo/WinGo_30S)
@@ -268,6 +282,7 @@ UPLOAD KE BAAD CHECK
 3b) Game page (/WinGo/WinGo_30S) par REFRESH karein — app load hona chahiye,
    JSON nahi. (Agar JSON hi dikhe to .htaccess purana pada hai — dobara extract.)
 4b) Winning popup: jeetne par popup ke saath orange-gold PARTICLES
+   (page khulte waqt NAHI — sirf popup aane par. Har win par dobara aayenge.)
    (sparkle burst) dikhne chahiye — dhaniwin jaisa. Agar particles na dikhein
    to Ctrl+Shift+R (hard refresh) ek baar kar lein, purana js cache ho sakta hai.
 4c) Top ke lottery category cards (WinGo / K3 / 5D...) me icon dikhna chahiye
