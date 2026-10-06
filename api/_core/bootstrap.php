@@ -2,6 +2,9 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/wallet.php';
 require_once __DIR__ . '/lottery_engine.php';
+// DhaniWin-parity WinGo/lottery layer (issue numbers, results, history, settle).
+require_once __DIR__ . '/lottery_dhaniwin.php';
+require_once __DIR__ . '/../_lottery_upstream.php';
 
 if (!function_exists('str_contains')) {
     function str_contains($haystack, $needle) { return $needle === '' || strpos($haystack, $needle) !== false; }
@@ -17,19 +20,71 @@ if (!defined('API_ROOT')) {
     define('API_ROOT', dirname(__DIR__));
 }
 
+/**
+ * Live mysqli connection.
+ *
+ * Purane build me ek baar connection fail hone par wahi band (closed) object
+ * cache ho jata tha, jisse har API "mysqli object is already closed" fatal
+ * error deti thi (live error_log me yahi dikha). Ab:
+ *   - closed / dead connection detect karke dobara connect karte hain,
+ *   - connection fail ho to null return hota hai (handler JSON error deta hai),
+ *   - koi PHP fatal error nahi aata.
+ */
 function db(): ?mysqli
 {
     static $conn = null;
-    if (class_exists('mysqli') && $conn instanceof mysqli) return $conn;
-    if (!class_exists('mysqli')) { error_log('mysqli extension is not enabled'); return null; }
-    if (function_exists('mysqli_report')) { mysqli_report(MYSQLI_REPORT_OFF); }
-    $conn = @new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    if ($conn->connect_errno) {
-        error_log('DB connection failed: ' . $conn->connect_error);
+    static $lastAttempt = 0;
+    static $failed = false;
+
+    if (class_exists('mysqli') && $conn instanceof mysqli) {
+        // Connection zinda hai? (ek halka ping)
+        $alive = false;
+        try {
+            $alive = @$conn->ping();
+        } catch (Throwable $e) {
+            $alive = false;
+        }
+        if ($alive) {
+            return $conn;
+        }
+        @$conn->close();
+        $conn = null;
+        $failed = false;
+    }
+    if (!class_exists('mysqli')) {
+        error_log('mysqli extension is not enabled');
         return null;
     }
-    $conn->set_charset('utf8mb4');
-    if (defined('AUTO_INSTALL_TABLES') && AUTO_INSTALL_TABLES) { ensure_database($conn); }
+    // Har request par baar baar fail na ho: 5 second ka backoff.
+    if ($failed && (time() - $lastAttempt) < 5) {
+        return null;
+    }
+    $lastAttempt = time();
+    if (function_exists('mysqli_report')) {
+        mysqli_report(MYSQLI_REPORT_OFF);
+    }
+    $candidate = @new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if (!$candidate || $candidate->connect_errno) {
+        $failed = true;
+        error_log('DB connection failed: ' . ($candidate->connect_error ?? 'unknown error') . ' (user ' . DB_USER . ')');
+        return null;
+    }
+    $candidate->set_charset('utf8mb4');
+    $conn = $candidate;
+    $failed = false;
+    if (defined('AUTO_INSTALL_TABLES') && AUTO_INSTALL_TABLES) {
+        ensure_database($conn);
+    }
+    return $conn;
+}
+
+/** API ke andar DB check karne ke liye chhota helper (fatal se bachne ke liye). */
+function db_or_fail(): mysqli
+{
+    $conn = db();
+    if (!$conn) {
+        api_error('Database connection failed. api/_core/config.php me DB name/user/password check karein.', 500, 500);
+    }
     return $conn;
 }
 
@@ -38,12 +93,52 @@ function now_ms(): int
     return (int) floor(microtime(true) * 1000);
 }
 
-function api_success($data = null, string $msg = 'Succeed', array $extra = []): void
+/** CORS/JSON headers (draw router + OPTIONS preflight ke liye). */
+function api_headers(): void
 {
+    if (headers_sent()) {
+        return;
+    }
     header('Content-Type: application/json; charset=utf-8');
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+}
+
+/** Ready-made payload bhejo (dhaniwin ka api_emit jaisa). */
+function api_emit(array $payload): void
+{
+    api_headers();
+    echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+/**
+ * Diagnostics key (`/api/Diag/WinGo?key=...`) — admin panel me isi ka link
+ * hota hai, isliye APP_SECRET ka pura value kabhi expose nahi hota.
+ */
+function dwl_diag_key(): string
+{
+    if (defined('DW_DIAG_KEY') && DW_DIAG_KEY !== '') {
+        return (string)DW_DIAG_KEY;
+    }
+    $secret = defined('APP_SECRET') ? (string)APP_SECRET : 'maanwin';
+    return substr(hash('sha256', 'maanwin-diag|' . $secret), 0, 12);
+}
+
+function api_success($data = null, string $msg = 'Succeed', array $extra = []): void
+{
+    if (!headers_sent()) {
+        header('Content-Type: application/json; charset=utf-8');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        // Period/result responses kabhi cache na hon (warna countdown aur
+        // history stale dikhte hain — live site par yahi hota tha).
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+    }
     $out = array_merge([
         'data' => $data,
         'code' => 0,
@@ -57,8 +152,12 @@ function api_success($data = null, string $msg = 'Succeed', array $extra = []): 
 
 function api_error(string $msg = 'Failure', int $code = 1, int $msgCode = 1, $data = null): void
 {
-    header('Content-Type: application/json; charset=utf-8');
-    header('Access-Control-Allow-Origin: *');
+    if (!headers_sent()) {
+        header('Content-Type: application/json; charset=utf-8');
+        header('Access-Control-Allow-Origin: *');
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+    }
     echo json_encode([
         'data' => $data,
         'code' => $code,
@@ -445,37 +544,22 @@ function user_response(array $u): array
     ];
 }
 
+/**
+ * Issue (period) data.
+ *
+ * DhaniWin parity: `issueNumber` = abhi khatam hua period (jiska result publish
+ * hai), `nextIssueNumber` = chal raha period, `current` object me countdown.
+ * Ye function purane callers (admin panel, draw router) ke liye wahi shape
+ * deta hai jo pehle deta tha, plus dhaniwin ke saare aliases.
+ */
 function lottery_issue(string $gameCode): array
 {
-    $interval = le_game_interval($gameCode);
-    $now = time();
-    $slot = intdiv($now, $interval);
-    $start = $slot * $interval;
-    $end = $start + $interval;
-    // Original-style issue: YYYYMMDD1000xxxxx (WinGo screenshots use this shape).
-    $issue = date('Ymd', $start) . '1000' . str_pad((string)($slot % 100000), 5, '0', STR_PAD_LEFT);
-    return [
-        'startTime' => $start * 1000,
-        'endTime' => $end * 1000,
-        'issueNumber' => $issue,
-        'intervalMinute' => $interval,
-        'intervalSecond' => $interval,
-        'duration' => $interval,
-        'gameCode' => $gameCode,
-        'diif' => 0,
-        'countdown' => max(0, $end - $now),
-        'remainTime' => max(0, $end - $now),
-        'timeRemaining' => max(0, $end - $now),
-        'currentTime' => $now * 1000,
-        'serviceTime' => $now * 1000,
-        'serverTime' => $now * 1000,
-        'isOpen' => true,
-    ];
+    return dwl_issue_data($gameCode);
 }
 
 function random_premium(string $gameCode): string
 {
-    return le_random_premium($gameCode);
+    return dwl_default_premium($gameCode, 'seed-' . mt_rand());
 }
 
 function game_name_from_code(string $code): string
@@ -786,6 +870,25 @@ function ensure_lottery_columns(mysqli $conn): void
         if ($res instanceof mysqli_result && $res->num_rows > 0) continue;
         @$conn->query($sql);
     }
+    // Admin manual result queue (dhaniwin ka result_queue).
+    @$conn->query("CREATE TABLE IF NOT EXISTS result_queue (
+      id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+      game_code VARCHAR(60) NOT NULL,
+      issue_number VARCHAR(60) NOT NULL,
+      premium VARCHAR(120) NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY(id),
+      UNIQUE KEY uq_queue (game_code, issue_number)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    // Result source (auto / manual / upstream_live / control_*) store karne ke liye.
+    $srcCol = @$conn->query("SHOW COLUMNS FROM lottery_results LIKE 'source'");
+    if (!($srcCol instanceof mysqli_result) || $srcCol->num_rows === 0) {
+        @$conn->query("ALTER TABLE lottery_results ADD COLUMN source VARCHAR(40) NOT NULL DEFAULT 'auto'");
+    }
+    // DhaniWin ke displayed payout rates se align karo (sirf untouched defaults par).
+    dwl_align_default_rates($conn);
+
     $idx = @$conn->query("SHOW INDEX FROM lottery_bets WHERE Key_name='idx_bet_issue'");
     if (!($idx instanceof mysqli_result) || $idx->num_rows === 0) { @$conn->query("ALTER TABLE lottery_bets ADD INDEX idx_bet_issue (issue_number)"); }
     $resultIdx = @$conn->query("SHOW INDEX FROM lottery_results WHERE Key_name='idx_result_game'");
@@ -1980,7 +2083,7 @@ CREATE TABLE IF NOT EXISTS lottery_game_settings (
   force_mode ENUM('auto','win','lose') NOT NULL DEFAULT 'auto',
   force_result VARCHAR(120) DEFAULT '',
   fee_percent DECIMAL(8,2) NOT NULL DEFAULT 0.00,
-  payout_number DECIMAL(10,2) NOT NULL DEFAULT 9.00,
+  payout_number DECIMAL(10,2) NOT NULL DEFAULT 8.20,
   payout_color DECIMAL(10,2) NOT NULL DEFAULT 2.00,
   payout_violet DECIMAL(10,2) NOT NULL DEFAULT 4.50,
   payout_bigsmall DECIMAL(10,2) NOT NULL DEFAULT 2.00,
@@ -2031,23 +2134,23 @@ INSERT IGNORE INTO games(category_code,vendor_code,game_id,game_code,name,img,so
 ('Lottery','ARLottery',10503,'MotoRace_3M','Moto Racing 3 Min','/img/6006/gamelogo/ARLottery/031716231-37001-file_20260507151716224.webp',35,98.0,0,1),
 ('Lottery','ARLottery',10505,'MotoRace_5M','Moto Racing 5 Min','/img/6006/gamelogo/ARLottery/031716231-37001-file_20260507151716224.webp',34,98.0,0,1);
 INSERT INTO lottery_game_settings(game_code, win_rate, force_mode, fee_percent, payout_number, payout_color, payout_violet, payout_bigsmall, payout_k3, payout_5d, payout_moto, immediate_settle) VALUES
-('*',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('WinGo_30S',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('WinGo_1M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('WinGo_3M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('WinGo_5M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('K3_1M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('K3_3M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('D5_1M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('D5_3M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('MotoRace_1M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('TrxWinGo_1M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('TrxWinGo_3M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('TrxWinGo_5M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('K3_5M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('D5_5M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('MotoRace_3M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0),
-('MotoRace_5M',45.00,'auto',0.00,9.00,2.00,4.50,2.00,2.00,9.50,9.50,0)
+('*',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('WinGo_30S',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('WinGo_1M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('WinGo_3M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('WinGo_5M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('K3_1M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('K3_3M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('D5_1M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('D5_3M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('MotoRace_1M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('TrxWinGo_1M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('TrxWinGo_3M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('TrxWinGo_5M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('K3_5M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('D5_5M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('MotoRace_3M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0),
+('MotoRace_5M',45.00,'auto',0.00,8.20,1.80,4.50,1.80,2.00,9.00,9.00,0)
 ON DUPLICATE KEY UPDATE win_rate=VALUES(win_rate), force_mode=VALUES(force_mode), fee_percent=VALUES(fee_percent), payout_number=VALUES(payout_number), payout_color=VALUES(payout_color), payout_violet=VALUES(payout_violet), payout_bigsmall=VALUES(payout_bigsmall), payout_k3=VALUES(payout_k3), payout_5d=VALUES(payout_5d), payout_moto=VALUES(payout_moto), immediate_settle=VALUES(immediate_settle);
 INSERT INTO settings(setting_key, setting_value) VALUES('auto_install_version','$versionEsc') ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value);
 SQL;
@@ -2210,7 +2313,7 @@ function ensure_v33_tables(mysqli $conn): void
         }
     }
 
-    $stmt = @$conn->prepare("INSERT IGNORE INTO lottery_game_settings(game_code,win_rate,force_mode,fee_percent,payout_number,payout_color,payout_violet,payout_bigsmall,payout_k3,payout_5d,payout_moto,immediate_settle) VALUES(?,45,'auto',0,9,2,4.5,2,2,9.5,9.5,0)");
+    $stmt = @$conn->prepare("INSERT IGNORE INTO lottery_game_settings(game_code,win_rate,force_mode,fee_percent,payout_number,payout_color,payout_violet,payout_bigsmall,payout_k3,payout_5d,payout_moto,immediate_settle) VALUES(?,45,'auto',0,8.2,1.8,4.5,1.8,2,9,9,0)");
     if ($stmt) {
         foreach (['K3_10M','D5_10M','TrxWinGo_10M'] as $code) {
             $stmt->bind_param('s', $code);
@@ -2316,4 +2419,45 @@ function ensure_v34_tables(mysqli $conn): void
             $stmt->execute();
         }
     }
+}
+
+
+/**
+ * DhaniWin ke default payout rates (Number 8.2x, Color 1.8x, Violet 4.5x,
+ * Big/Small 1.8x). Sirf un rows ko badalta hai jo abhi tak untouched purane
+ * defaults par hain (9 / 2 / 2 / 4.5 / 9.5 / 9.5) — admin ne khud kuch set
+ * kiya ho to usko chhedta nahi. Ek baar chalta hai (settings marker ke saath).
+ */
+function dwl_align_default_rates(mysqli $conn): void
+{
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    $marker = 'wingo_rates_aligned_v1';
+    $res = @$conn->query("SELECT setting_value FROM settings WHERE setting_key='" . $conn->real_escape_string($marker) . "' LIMIT 1");
+    if ($res instanceof mysqli_result && $res->num_rows > 0) {
+        return;
+    }
+    $targets = [
+        'payout_number' => 8.20,
+        'payout_color' => 1.80,
+        'payout_violet' => 4.50,
+        'payout_bigsmall' => 1.80,
+        'payout_5d' => 9.00,
+        'payout_moto' => 9.00,
+    ];
+    $legacy = [
+        'payout_number' => 9.0,
+        'payout_color' => 2.0,
+        'payout_violet' => 4.5,
+        'payout_bigsmall' => 2.0,
+        'payout_5d' => 9.5,
+        'payout_moto' => 9.5,
+    ];
+    $set = [];
+    foreach ($targets as $col => $value) {
+        $set[] = $col . '=CASE WHEN ABS(' . $col . '-' . $legacy[$col] . ')<0.0001 THEN ' . $value . ' ELSE ' . $col . ' END';
+    }
+    @$conn->query('UPDATE lottery_game_settings SET ' . implode(', ', $set));
+    @$conn->query("INSERT INTO settings(setting_key, setting_value) VALUES('" . $conn->real_escape_string($marker) . "','1') ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)");
 }

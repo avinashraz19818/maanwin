@@ -247,7 +247,9 @@ switch ($path) {
     case 'Lottery/GetMyGameRecord': handle_lottery_record($data); break;
     case 'Lottery/GetTrendStatistics': handle_lottery_trend($data); break;
     case 'Lottery/GetWinLossResult': handle_win_loss($data); break;
-    case 'Lottery/GetWingoLiveUrl': api_success(['url'=>'']); break;
+    case 'Lottery/GetWingoLiveUrl': api_success(['url'=>(string)dwl_setting('lottery_ws_url', 'wss://ws-pro.ar-lottery01.com'), 'webSocketUrl'=>(string)dwl_setting('lottery_ws_url', 'wss://ws-pro.ar-lottery01.com')]); break;
+    case 'Diag/WinGo': handle_wingo_diagnostics($data); break;
+    case 'Diagnostics/WinGo': handle_wingo_diagnostics($data); break;
     case 'Lottery/GetDragonList': api_success([]); break;
     case 'Admin/GetResultHistory': handle_admin_result_history($data); break;
     case 'Lottery/WinGoBet':
@@ -2950,288 +2952,424 @@ function lottery_group_from_context(array $d = []): string
 
 function lottery_games(string $group = 'WinGo'): array
 {
-    $all = [
-        ['gameCode'=>'WinGo_30S','gameName'=>'WinGo 30sec','name'=>'WinGo 30sec','lotteryCode'=>'WinGo','sort'=>44,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/014807811-35339-file_20260504134807805.webp'],
-        ['gameCode'=>'WinGo_1M','gameName'=>'WinGo 1 Min','name'=>'WinGo 1 Min','lotteryCode'=>'WinGo','sort'=>43,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/014823899-35341-file_20260504134823893.webp'],
-        ['gameCode'=>'WinGo_3M','gameName'=>'WinGo 3 Min','name'=>'WinGo 3 Min','lotteryCode'=>'WinGo','sort'=>42,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/014841344-35343-file_20260504134841337.webp'],
-        ['gameCode'=>'WinGo_5M','gameName'=>'WinGo 5 Min','name'=>'WinGo 5 Min','lotteryCode'=>'WinGo','sort'=>41,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/014856938-35345-file_20260504134856932.webp'],
-        ['gameCode'=>'TrxWinGo_1M','gameName'=>'TrxWinGo 1 Min','name'=>'TrxWinGo 1 Min','lotteryCode'=>'TrxWinGo','sort'=>14,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/015204001-35363-file_20260504135203994.webp'],
-        ['gameCode'=>'TrxWinGo_3M','gameName'=>'TrxWinGo 3 Min','name'=>'TrxWinGo 3 Min','lotteryCode'=>'TrxWinGo','sort'=>13,'state'=>1,'img'=>'/img/6006/gamelogo/ARLottery/031841608-37005-file_20260507151841602.webp'],
-        ['gameCode'=>'TrxWinGo_5M','gameName'=>'TrxWinGo 5 Min','name'=>'TrxWinGo 5 Min','lotteryCode'=>'TrxWinGo','sort'=>12,'state'=>1,'img'=>'/img/6006/gamelogo/ARLottery/031841608-37005-file_20260507151841602.webp'],
-        ['gameCode'=>'TrxWinGo_10M','gameName'=>'TrxWinGo 10 Min','name'=>'TrxWinGo 10 Min','lotteryCode'=>'TrxWinGo','sort'=>11,'state'=>1,'img'=>'/img/6006/gamelogo/ARLottery/031841608-37005-file_20260507151841602.webp'],
-        ['gameCode'=>'K3_1M','gameName'=>'K3 1 Min','name'=>'K3 1 Min','lotteryCode'=>'K3','sort'=>34,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/014920441-35347-file_20260504134920434.webp'],
-        ['gameCode'=>'K3_3M','gameName'=>'K3 3 Min','name'=>'K3 3 Min','lotteryCode'=>'K3','sort'=>33,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/014939412-35349-file_20260504134939406.webp'],
-        ['gameCode'=>'K3_5M','gameName'=>'K3 5 Min','name'=>'K3 5 Min','lotteryCode'=>'K3','sort'=>32,'state'=>1,'img'=>'/img/6006/gamelogo/ARLottery/031236245-36983-file_20260507151236239.webp'],
-        ['gameCode'=>'K3_10M','gameName'=>'K3 10 Min','name'=>'K3 10 Min','lotteryCode'=>'K3','sort'=>31,'state'=>1,'img'=>'/img/6006/gamelogo/ARLottery/031236245-36983-file_20260507151236239.webp'],
-        ['gameCode'=>'D5_1M','gameName'=>'5D 1 Min','name'=>'5D 1 Min','lotteryCode'=>'D5','sort'=>24,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/015032194-35355-file_20260504135032189.webp'],
-        ['gameCode'=>'D5_3M','gameName'=>'5D 3 Min','name'=>'5D 3 Min','lotteryCode'=>'D5','sort'=>23,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/015045373-35357-file_20260504135045367.webp'],
-        ['gameCode'=>'D5_5M','gameName'=>'5D 5 Min','name'=>'5D 5 Min','lotteryCode'=>'D5','sort'=>22,'state'=>1,'img'=>'/img/6006/gamelogo/ARLottery/031415909-36991-file_20260507151415901.webp'],
-        ['gameCode'=>'D5_10M','gameName'=>'5D 10 Min','name'=>'5D 10 Min','lotteryCode'=>'D5','sort'=>21,'state'=>1,'img'=>'/img/6006/gamelogo/ARLottery/031415909-36991-file_20260507151415901.webp'],
-        ['gameCode'=>'MotoRace_1M','gameName'=>'Moto Racing 1 Min','name'=>'Moto Racing 1 Min','lotteryCode'=>'MotoRace','sort'=>36,'state'=>1,'img'=>'/img/6007/gamelogo/ARLottery/015329660-35371-file_20260504135329651.webp'],
-        ['gameCode'=>'MotoRace_3M','gameName'=>'Moto Racing 3 Min','name'=>'Moto Racing 3 Min','lotteryCode'=>'MotoRace','sort'=>35,'state'=>1,'img'=>'/img/6006/gamelogo/ARLottery/031716231-37001-file_20260507151716224.webp'],
-        ['gameCode'=>'MotoRace_5M','gameName'=>'Moto Racing 5 Min','name'=>'Moto Racing 5 Min','lotteryCode'=>'MotoRace','sort'=>34,'state'=>1,'img'=>'/img/6006/gamelogo/ARLottery/031716231-37001-file_20260507151716224.webp'],
-    ];
-    $group = $group ?: 'WinGo';
-    $list = array_values(array_filter($all, function($g) use ($group) { return strcasecmp($g['lotteryCode'], $group) === 0; }));
-    if (!$list) $list = array_values(array_filter($all, fn($g) => $g['lotteryCode'] === 'WinGo'));
-    return [[
-        'categoryCode'=>'Lottery',
-        'categoryName'=>'Lottery',
-        'gameTypeName'=>$group,
-        'lotteryCode'=>$group,
-        'lotteryNameDict'=>['WinGo'=>'WinGo','TrxWinGo'=>'Trx WinGo','K3'=>'K3','D5'=>'5D','MotoRace'=>'Moto Racing'],
-        'sort'=>100,
-        'gameList'=>$list
-    ]];
+    // DhaniWin jaisa: saari categories (WinGo, MotoRace, 5D, K3, TrxWinGo)
+    // ek hi GetGameList response me jaati hain, warna baaki game screens khali
+    // rehte hain.
+    $groups = dwl_game_groups();
+    $group = trim($group);
+    if ($group === '' || strcasecmp($group, 'all') === 0) {
+        return $groups;
+    }
+    $filtered = [];
+    foreach ($groups as $row) {
+        if (strcasecmp((string)$row['lotteryCode'], $group) === 0 || strcasecmp((string)$row['categoryCode'], $group) === 0) {
+            $filtered[] = $row;
+        }
+    }
+    return $filtered ?: $groups;
 }
 
 
 function handle_admin_result_history(array $d): void
 {
-    $code = first_value($d, ['gameCode'], 'WinGo_30S');
-    $limit = max(10, min(100, (int)first_value($d, ['limit','pageSize'], 10)));
-    $list = [];
-    for ($i=1; $i<=$limit; $i++) {
-        $issue = le_issue_by_offset($code, $i);
-        $r = le_result_for_issue($code, $issue, true);
-        $list[] = lottery_public_result($code, $issue, $r, now_ms() - ($i * le_game_interval($code) * 1000));
-    }
-    api_success(['list'=>$list,'pageNo'=>1,'totalPage'=>1,'totalCount'=>count($list)]);
+    $code = dwl_normalize_game((string)first_value($d, ['gameCode'], 'WinGo_30S'));
+    $limit = max(10, min(100, (int)first_value($d, ['limit', 'pageSize'], 10)));
+    api_success(dwl_history_page($code, 1, $limit));
 }
 
-function handle_lottery_game_list(array $d = []): void { api_success(lottery_games(lottery_group_from_context($d)), 'Success', ['serviceTime'=>now_ms()]); }
+function handle_lottery_game_list(array $d = []): void
+{
+    $group = lottery_group_from_context($d);
+    $raw = (string)first_value($d, ['lotteryCode', 'categoryCode', 'gameType', 'group'], '');
+    if ($raw === '' && in_array(strtolower($group), ['', 'wingo'], true)) {
+        // WinGo screen bhi poori list maangta hai; dhaniwin bhi poori list deta hai.
+        api_success(dwl_game_groups(), 'Success', ['serviceTime' => now_ms()]);
+    }
+    api_success(lottery_games($raw !== '' ? $raw : $group), 'Success', ['serviceTime' => now_ms()]);
+}
 function handle_lottery_user_info(): void { $u=require_login_user(); le_settle_pending_bets('', '', (int)$u['id']); $u=current_user() ?: $u; api_success(['userId'=>(int)$u['id'],'nickname'=>$u['nickname'],'sysCurrency'=>APP_CURRENCY,'isOpenFollow'=>false], 'Success', ['serviceTime'=>now_ms()]); }
-function handle_lottery_balance(): void { $u=require_login_user(); le_settle_pending_bets('', '', (int)$u['id']); $u=current_user() ?: $u; api_success(['balance'=>(float)$u['balance']], 'Success', ['serviceTime'=>now_ms()]); }
+function handle_lottery_balance(): void { $u=require_login_user(); le_settle_pending_bets('', '', (int)$u['id']); $u=current_user() ?: $u; api_success(['balance'=>(float)$u['balance'],'currency'=>APP_CURRENCY], 'Success', ['serviceTime'=>now_ms()]); }
 function handle_lottery_issue(array $d): void
 {
-    $code = first_value($d, ['gameCode', 'game_code'], 'WinGo_30S');
-    api_success(lottery_issue($code), 'Success', ['serviceTime'=>now_ms()]);
+    $code = dwl_normalize_game((string)first_value($d, ['gameCode', 'game_code', 'lotteryCode'], 'WinGo_30S'));
+    api_success(dwl_issue_data($code), 'Success', ['serviceTime' => now_ms()]);
 }
+
 function handle_lottery_game_info(array $d): void
 {
-    $code=first_value($d,['gameCode'],'WinGo_30S');
+    $code = dwl_normalize_game((string)first_value($d, ['gameCode', 'game_code'], 'WinGo_30S'));
     $settings = le_get_settings($code);
-    $rates=[];
-    if(le_is_k3($code)){
-        $rates = [
-            ["playTypeId"=>70, "playType"=>"SumNum", "playBet"=>"15", "state"=>1, "playRate"=>20.74],
-            ["playTypeId"=>79, "playType"=>"NumSame3", "playBet"=>"3TD", "state"=>1, "playRate"=>207.36],
-            ["playTypeId"=>62, "playType"=>"SumNum", "playBet"=>"7", "state"=>1, "playRate"=>13.83],
-            ["playTypeId"=>69, "playType"=>"SumNum", "playBet"=>"14", "state"=>1, "playRate"=>13.83],
-            ["playTypeId"=>71, "playType"=>"SumNum", "playBet"=>"16", "state"=>1, "playRate"=>34.56],
-            ["playTypeId"=>60, "playType"=>"SumNum", "playBet"=>"5", "state"=>1, "playRate"=>34.56],
-            ["playTypeId"=>77, "playType"=>"NumSame2", "playBet"=>"2TD", "state"=>1, "playRate"=>13.83],
-            ["playTypeId"=>58, "playType"=>"SumNum", "playBet"=>"3", "state"=>1, "playRate"=>207.36],
-            ["playTypeId"=>61, "playType"=>"SumNum", "playBet"=>"6", "state"=>1, "playRate"=>20.74],
-            ["playTypeId"=>78, "playType"=>"NumSame2Mult", "playBet"=>"2TF", "state"=>1, "playRate"=>69.12],
-            ["playTypeId"=>68, "playType"=>"SumNum", "playBet"=>"13", "state"=>1, "playRate"=>9.88],
-            ["playTypeId"=>65, "playType"=>"SumNum", "playBet"=>"10", "state"=>1, "playRate"=>7.68],
-            ["playTypeId"=>67, "playType"=>"SumNum", "playBet"=>"12", "state"=>1, "playRate"=>8.30],
-            ["playTypeId"=>59, "playType"=>"SumNum", "playBet"=>"4", "state"=>1, "playRate"=>69.12],
-            ["playTypeId"=>64, "playType"=>"SumNum", "playBet"=>"9", "state"=>1, "playRate"=>8.30],
-            ["playTypeId"=>74, "playType"=>"SumBigSmall", "playBet"=>"HL", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>66, "playType"=>"SumNum", "playBet"=>"11", "state"=>1, "playRate"=>7.68],
-            ["playTypeId"=>76, "playType"=>"NumDiff2", "playBet"=>"2BT", "state"=>1, "playRate"=>6.91],
-            ["playTypeId"=>82, "playType"=>"NumNear3All", "playBet"=>"3LT", "state"=>1, "playRate"=>8.64],
-            ["playTypeId"=>81, "playType"=>"NumDiff3", "playBet"=>"3BT", "state"=>1, "playRate"=>34.56],
-            ["playTypeId"=>72, "playType"=>"SumNum", "playBet"=>"17", "state"=>1, "playRate"=>69.12],
-            ["playTypeId"=>80, "playType"=>"NumSame3All", "playBet"=>"3TT", "state"=>1, "playRate"=>34.56],
-            ["playTypeId"=>63, "playType"=>"SumNum", "playBet"=>"8", "state"=>1, "playRate"=>9.88],
-            ["playTypeId"=>75, "playType"=>"SumOddEven", "playBet"=>"OE", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>73, "playType"=>"SumNum", "playBet"=>"18", "state"=>1, "playRate"=>207.36]
-        ];
-    } elseif(le_is_d5($code)){
-        $rates = [
-            ["playTypeId"=>104, "playType"=>"FifthBigSmall", "playBet"=>"H", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>100, "playType"=>"FourthBigSmall", "playBet"=>"L", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>102, "playType"=>"FourthOddEven", "playBet"=>"E", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>101, "playType"=>"FourthOddEven", "playBet"=>"O", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>92, "playType"=>"SecondOddEven", "playBet"=>"E", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>107, "playType"=>"FifthOddEven", "playBet"=>"E", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>106, "playType"=>"FifthOddEven", "playBet"=>"O", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>103, "playType"=>"FifthNum", "playBet"=>"0-9", "state"=>1, "playRate"=>9.00],
-            ["playTypeId"=>109, "playType"=>"SumBigSmall", "playBet"=>"L", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>91, "playType"=>"SecondOddEven", "playBet"=>"O", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>97, "playType"=>"ThirdOddEven", "playBet"=>"E", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>111, "playType"=>"SumOddEven", "playBet"=>"E", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>88, "playType"=>"SecondNum", "playBet"=>"0-9", "state"=>1, "playRate"=>9.00],
-            ["playTypeId"=>85, "playType"=>"FirstBigSmall", "playBet"=>"L", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>110, "playType"=>"SumOddEven", "playBet"=>"O", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>87, "playType"=>"FirstOddEven", "playBet"=>"E", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>108, "playType"=>"SumBigSmall", "playBet"=>"H", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>93, "playType"=>"ThirdNum", "playBet"=>"0-9", "state"=>1, "playRate"=>9.00],
-            ["playTypeId"=>86, "playType"=>"FirstOddEven", "playBet"=>"O", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>99, "playType"=>"FourthBigSmall", "playBet"=>"H", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>90, "playType"=>"SecondBigSmall", "playBet"=>"L", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>98, "playType"=>"FourthNum", "playBet"=>"0-9", "state"=>1, "playRate"=>9.00],
-            ["playTypeId"=>89, "playType"=>"SecondBigSmall", "playBet"=>"H", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>96, "playType"=>"ThirdOddEven", "playBet"=>"O", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>95, "playType"=>"ThirdBigSmall", "playBet"=>"L", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>105, "playType"=>"FifthBigSmall", "playBet"=>"L", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>94, "playType"=>"ThirdBigSmall", "playBet"=>"H", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>84, "playType"=>"FirstBigSmall", "playBet"=>"H", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>83, "playType"=>"FirstNum", "playBet"=>"0-9", "state"=>1, "playRate"=>9.00]
-        ];
-    } elseif(le_is_moto($code)){
-        for($i=1;$i<=10;$i++) $rates[]=['playTypeId'=>200+$i, 'playType'=>'FirstNum','playBet'=>(string)$i,'playRate'=>(float)$settings['payout_moto']];
-    } elseif(stripos($code, 'TrxWinGo') !== false){
-        $rates = [
-            ["playTypeId"=>112, "playType"=>"Color", "playBet"=>"green", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>119, "playType"=>"BigSmall", "playBet"=>"big", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>115, "playType"=>"Color", "playBet"=>"violet", "state"=>1, "playRate"=>4.50],
-            ["playTypeId"=>113, "playType"=>"Color", "playBet"=>"red", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>117, "playType"=>"Color", "playBet"=>"red", "state"=>1, "playRate"=>1.50],
-            ["playTypeId"=>120, "playType"=>"BigSmall", "playBet"=>"small", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>114, "playType"=>"Color", "playBet"=>"violet", "state"=>1, "playRate"=>4.50],
-            ["playTypeId"=>118, "playType"=>"Num", "playBet"=>"0-9", "state"=>1, "playRate"=>9.00],
-            ["playTypeId"=>116, "playType"=>"Color", "playBet"=>"green", "state"=>1, "playRate"=>1.50]
-        ];
-    } else {
-        $rates = [
-            ["playTypeId"=>54, "playType"=>"Color", "playBet"=>"violet", "state"=>1, "playRate"=>4.50],
-            ["playTypeId"=>52, "playType"=>"Color", "playBet"=>"red", "state"=>1, "playRate"=>1.50],
-            ["playTypeId"=>53, "playType"=>"Color", "playBet"=>"violet", "state"=>1, "playRate"=>4.50],
-            ["playTypeId"=>50, "playType"=>"Color", "playBet"=>"green", "state"=>1, "playRate"=>1.50],
-            ["playTypeId"=>49, "playType"=>"Color", "playBet"=>"green", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>51, "playType"=>"Color", "playBet"=>"red", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>55, "playType"=>"Num", "playBet"=>"0-9", "state"=>1, "playRate"=>9.00],
-            ["playTypeId"=>56, "playType"=>"BigSmall", "playBet"=>"big", "state"=>1, "playRate"=>2.00],
-            ["playTypeId"=>57, "playType"=>"BigSmall", "playBet"=>"small", "state"=>1, "playRate"=>2.00]
-        ];
-    }
-    api_success([
-        'gameCode'=>$code,
-        'gameName'=>game_name_from_code($code),
-        'state'=>1,
-        'betScopes'=>[1,10,100,1000],
-        'betMultiples'=>[1,5,10,20,50,100],
-        'rates'=>$rates,
-        'webSocketUrl'=>'',
-        'winRate'=>(float)$settings['win_rate'],
-        'forceMode'=>$settings['force_mode'],
-    ], 'Success', ['serviceTime'=>now_ms()]);
+    $issue = dwl_issue_data($code);
+    $payload = [
+        'gameCode' => $code,
+        'game_code' => $code,
+        'lotteryCode' => dwl_lottery_code($code),
+        'gameName' => dwl_game_name($code),
+        'state' => 1,
+        'betScopes' => [1, 10, 100, 1000],
+        'betMultiples' => [1, 5, 10, 20, 50, 100],
+        'rates' => dwl_display_rates($code),
+        'webSocketUrl' => (string)dwl_setting('lottery_ws_url', 'wss://ws-pro.ar-lottery01.com'),
+        'winRate' => (float)$settings['win_rate'],
+        'forceMode' => (string)$settings['force_mode'],
+        'isLocked' => (bool)$issue['isLocked'],
+        'countdown' => (int)$issue['countdown'],
+        'issueNumber' => (string)$issue['issueNumber'],
+        'nextIssueNumber' => (string)$issue['nextIssueNumber'],
+        'current' => $issue['current'],
+    ];
+    // Frontend `intervalMinute * 60` karta hai => minutes me do.
+    api_success(array_merge($issue, $payload), 'Success', ['serviceTime' => now_ms()]);
 }
-function handle_lottery_bet_limit(array $d): void { api_success([['minAmount'=>1,'maxAmount'=>100000,'playType'=>'all']], 'Success', ['serviceTime'=>now_ms()]); }
-function handle_lottery_introduce(array $d): void { $code=first_value($d,['gameCode'],'Game'); api_success(['title'=>game_name_from_code($code),'content'=>'<p>Demo rules: choose a result and place a virtual coin bet. Admin panel se win rate aur payout manage ho sakta hai.</p>'], 'Success', ['serviceTime'=>now_ms()]); }
-function handle_lottery_history(array $d): void
+
+function handle_lottery_bet_limit(array $d): void
 {
-    $code = first_value($d, ['gameCode'], 'WinGo_30S');
-
-    le_settle_pending_bets($code);
-
-    $pageNo = max(1, (int)($d['pageNo'] ?? 1));
-
-    // User game page history: ek page par sirf latest 10 result.
-    // Frontend 20/50 bheje tab bhi backend 10 hi return karega.
-    $set = site_settings();
-    $pageSize = max(1, min(10, (int)($set['game_history_page_size'] ?? 10)));
-
-    $list = [];
-    for ($i = 1; $i <= $pageSize; $i++) {
-        $offset = (($pageNo - 1) * $pageSize) + $i;
-        $issue = le_issue_by_offset($code, $offset);
-        $r = le_result_for_issue($code, $issue, true);
-
-        $list[] = lottery_public_result($code, $issue, $r, now_ms() - ($offset * le_game_interval($code) * 1000));
-    }
-
     api_success([
-        'list' => $list,
-        'pageNo' => $pageNo,
-        'pageSize' => $pageSize,
-        'totalPage' => 50,
-        'totalCount' => 500
+        ['playType' => 'Num', 'minAmount' => 1, 'maxAmount' => 100000, 'maxPayoutAmount' => 1000000, 'isSupportDoubleBet' => 1],
+        ['playType' => 'Color', 'minAmount' => 1, 'maxAmount' => 100000, 'maxPayoutAmount' => 1000000, 'isSupportDoubleBet' => 1],
+        ['playType' => 'BigSmall', 'minAmount' => 1, 'maxAmount' => 100000, 'maxPayoutAmount' => 1000000, 'isSupportDoubleBet' => 1],
     ], 'Success', ['serviceTime' => now_ms()]);
 }
+
+function handle_lottery_introduce(array $d): void
+{
+    $code = dwl_normalize_game((string)first_value($d, ['gameCode'], 'WinGo_30S'));
+    $rules = [
+        'WinGo' => '<p>WinGo: 0-9 me se number par bet karein. Number 8.2x, Green/Red 1.8x, Violet 4.5x, Big 1.8x, Small 1.8x. Har 30 second / 1 / 3 / 5 / 10 minute me naya draw.</p>',
+        'TrxWinGo' => '<p>TrxWinGo: TRON block hash se draw hota hai. Number 8.2x, Color 1.8x (Violet 4.5x), Big/Small 1.8x.</p>',
+        'K3' => '<p>K3: teen dice (1-6). Sum, Big/Small, Odd/Even aur dice combinations par bet karein.</p>',
+        'D5' => '<p>5D: paanch digits (0-9). Har position, Sum Big/Small aur Odd/Even par bet karein.</p>',
+        'MotoRace' => '<p>Moto Racing: 10 cars ki race. First/Second/Third rank ke number, Big/Small aur Odd/Even par bet karein.</p>',
+    ];
+    $lottery = dwl_lottery_code($code);
+    api_success([
+        'title' => dwl_game_name($code),
+        'content' => $rules[$lottery] ?? $rules['WinGo'],
+        'gameCode' => $code,
+        'lotteryCode' => $lottery,
+    ], 'Success', ['serviceTime' => now_ms()]);
+}
+
+function handle_lottery_history(array $d): void
+{
+    $code = dwl_normalize_game((string)first_value($d, ['gameCode', 'game_code'], 'WinGo_30S'));
+    // Publish ho chuke results settle karo (dhaniwin bhi har read par settle karta hai).
+    le_settle_pending_bets($code);
+
+    $pageNo = max(1, (int)first_value($d, ['pageNo', 'page_no', 'page'], 1));
+    $set = site_settings();
+    $pageSize = (int)first_value($d, ['pageSize', 'page_size', 'limit'], (int)($set['game_history_page_size'] ?? 10));
+    $pageSize = max(1, min(100, $pageSize));
+
+    $payload = dwl_history_page($code, $pageNo, $pageSize);
+
+    // Agar admin ne upstream provider lagaya hai to live history usse lo
+    // (dhaniwin isi tarah remote result dikhata hai).
+    if ($pageNo === 1 && function_exists('dwl_upstream_fetch_history') && dwl_upstream_enabled()) {
+        $upstream = dwl_upstream_fetch_history($code, $pageNo, $pageSize);
+        if (is_array($upstream) && !empty($upstream['list'])) {
+            foreach ($upstream['list'] as $detail) {
+                $issue = (string)($detail['issueNumber'] ?? '');
+                if ($issue === '') continue;
+                $payload['list'][] = dwl_history_item($code, $issue, $detail);
+            }
+            // Duplicate issue hata kar latest pehle.
+            $seen = [];
+            $unique = [];
+            foreach ($payload['list'] as $row) {
+                if (isset($seen[$row['issueNumber']])) continue;
+                $seen[$row['issueNumber']] = true;
+                $unique[] = $row;
+            }
+            usort($unique, function ($a, $b) {
+                return strcmp((string)$b['issueNumber'], (string)$a['issueNumber']);
+            });
+            $payload['list'] = array_slice($unique, 0, $pageSize);
+        }
+    }
+
+    api_success($payload, 'Success', ['serviceTime' => now_ms()]);
+}
+
 function handle_lottery_record(array $d): void
 {
-    $u=require_login_user(); $conn=db(); $list=[]; $total=0; $pageNo=max(1,(int)($d['pageNo']??1)); $pageSize=10; $off=($pageNo-1)*$pageSize; $code=first_value($d,['gameCode'],'');
-    le_settle_pending_bets($code, '', (int)$u['id']);
-    if($conn){$uid=(int)$u['id']; $like=$code; $stmt=$conn->prepare('SELECT COUNT(*) c FROM lottery_bets WHERE user_id=? AND (?="" OR game_code=?)'); $stmt->bind_param('iss',$uid,$like,$like); $stmt->execute(); $total=(int)$stmt->get_result()->fetch_assoc()['c']; $stmt=$conn->prepare('SELECT * FROM lottery_bets WHERE user_id=? AND (?="" OR game_code=?) ORDER BY id DESC LIMIT ? OFFSET ?'); $stmt->bind_param('issii',$uid,$like,$like,$pageSize,$off); $stmt->execute(); $rs=$stmt->get_result(); while($r=$rs->fetch_assoc()) $list[]=bet_row_response($r);}
-    api_success(['list'=>$list,'pageNo'=>$pageNo,'totalPage'=>(int)ceil(($total?:0)/$pageSize),'totalCount'=>$total], 'Success', ['serviceTime'=>now_ms()]);
+    $u = require_login_user();
+    $conn = db();
+    $list = [];
+    $total = 0;
+    $pageNo = max(1, (int)first_value($d, ['pageNo', 'page_no', 'page'], 1));
+    $pageSize = max(1, min(100, (int)first_value($d, ['pageSize', 'page_size', 'limit'], 10)));
+    $off = ($pageNo - 1) * $pageSize;
+    $code = (string)first_value($d, ['gameCode', 'game_code'], '');
+    $lottery = (string)first_value($d, ['lotteryCode', 'categoryCode'], '');
+    if ($conn) {
+        $uid = (int)$u['id'];
+        // Closed issues ke pending bets settle karo, taaki record sahi state dikhaye.
+        le_settle_pending_bets($code, '', $uid);
+        $sqlWhere = 'user_id=?';
+        $types = 'i';
+        $params = [$uid];
+        if ($code !== '') {
+            $sqlWhere .= ' AND game_code=?';
+            $types .= 's';
+            $params[] = dwl_normalize_game($code);
+        } elseif ($lottery !== '' && !in_array(strtolower($lottery), ['lottery', 'all'], true)) {
+            $codes = [];
+            foreach (dwl_game_table() as $gameCode => $meta) {
+                if (strcasecmp($meta[0], $lottery) === 0) $codes[] = $gameCode;
+            }
+            if ($codes) {
+                $sqlWhere .= ' AND game_code IN (' . implode(',', array_fill(0, count($codes), '?')) . ')';
+                $types .= str_repeat('s', count($codes));
+                $params = array_merge($params, $codes);
+            }
+        }
+        $stmt = $conn->prepare('SELECT COUNT(*) c FROM lottery_bets WHERE ' . $sqlWhere);
+        if ($stmt) {
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $total = (int)($stmt->get_result()->fetch_assoc()['c'] ?? 0);
+            $stmt->close();
+        }
+        $stmt = $conn->prepare('SELECT * FROM lottery_bets WHERE ' . $sqlWhere . ' ORDER BY id DESC LIMIT ? OFFSET ?');
+        if ($stmt) {
+            $typesAll = $types . 'ii';
+            $paramsAll = array_merge($params, [$pageSize, $off]);
+            $stmt->bind_param($typesAll, ...$paramsAll);
+            $stmt->execute();
+            $rs = $stmt->get_result();
+            while ($r = $rs->fetch_assoc()) $list[] = bet_row_response($r);
+            $stmt->close();
+        }
+    }
+    api_success(['list' => $list, 'pageNo' => $pageNo, 'pageSize' => $pageSize, 'totalPage' => (int)ceil(($total ?: 0) / $pageSize), 'totalCount' => $total], 'Success', ['serviceTime' => now_ms()]);
 }
+
 function bet_row_response(array $r): array { return le_response_row($r); }
+
 function handle_lottery_trend(array $d): void
 {
-    $code=first_value($d,['gameCode'],'WinGo_30S'); $list=[];
-    for($i=1;$i<=30;$i++){ $issue=le_issue_by_offset($code,$i); $r=le_result_for_issue($code,$issue,true); $list[]=['issueNumber'=>$issue,'number'=>$r['number'],'premium'=>$r['premium'],'color'=>$r['color'],'bigSmall'=>$r['bigSmall'],'sum'=>$r['sum']]; }
-    api_success(['list'=>$list], 'Success', ['serviceTime'=>now_ms()]);
+    $code = dwl_normalize_game((string)first_value($d, ['gameCode', 'game_code'], 'WinGo_30S'));
+    $pageSize = max(10, min(100, (int)first_value($d, ['pageSize', 'limit'], 50)));
+    api_success(dwl_trend($code, $pageSize), 'Success', ['serviceTime' => now_ms()]);
 }
+
+/**
+ * Win/Loss result (frontend winner popup isi ko padhta hai).
+ * status: null = pending, true = win, false = loss.
+ */
 function handle_win_loss(array $d): void
 {
-    $u=require_login_user(); $conn=db();
-    if(!$conn) api_success(['status'=>null], 'Success', ['serviceTime'=>now_ms()]);
-    $uid=(int)$u['id']; $issue=first_value($d,['issueNumber'],''); $order=first_value($d,['orderNo','orderId'],'');
+    $u = require_login_user();
+    $conn = db();
+    if (!$conn) api_success(['status' => null, 'isPending' => true, 'winAmount' => 0], 'Success', ['serviceTime' => now_ms()]);
+    $uid = (int)$u['id'];
+    $issue = (string)first_value($d, ['issueNumber', 'issue_number'], '');
+    $order = (string)first_value($d, ['orderNo', 'orderId', 'order_no'], '');
+
     le_settle_pending_bets('', $issue, $uid, $order);
-    if($order){ $stmt=$conn->prepare('SELECT * FROM lottery_bets WHERE user_id=? AND order_no=? ORDER BY id DESC LIMIT 1'); $stmt->bind_param('is',$uid,$order); }
-    elseif($issue){ $stmt=$conn->prepare('SELECT * FROM lottery_bets WHERE user_id=? AND issue_number=? ORDER BY id DESC LIMIT 1'); $stmt->bind_param('is',$uid,$issue); }
-    else { $stmt=$conn->prepare('SELECT * FROM lottery_bets WHERE user_id=? ORDER BY id DESC LIMIT 1'); $stmt->bind_param('i',$uid); }
-    $stmt->execute(); $r=$stmt->get_result()->fetch_assoc();
-    if(!$r) api_success(['status'=>null,'isWin'=>false,'isPending'=>false,'amount'=>0], 'Success', ['serviceTime'=>now_ms()]);
-    $row=bet_row_response($r); $state=(int)$r['state']; $isPending=$state===2; $isWin=$state===1; $winAmount=$isWin?max(0,(float)$r['win_lose_amount']+(float)$r['real_amount']+(float)$r['fee']):0.0;
-    api_success(['status'=>$isPending?null:$isWin,'state'=>$state,'isPending'=>$isPending,'isWin'=>$isWin,'amount'=>$winAmount,'winAmount'=>$winAmount,'winLoseAmount'=>(float)$r['win_lose_amount'],'issueNumber'=>$r['issue_number'],'orderNo'=>$r['order_no'],'result'=>$row], 'Success', ['serviceTime'=>now_ms()]);
+
+    if ($order !== '') {
+        $stmt = $conn->prepare('SELECT * FROM lottery_bets WHERE user_id=? AND order_no=? ORDER BY id DESC LIMIT 1');
+        $stmt->bind_param('is', $uid, $order);
+    } elseif ($issue !== '') {
+        $stmt = $conn->prepare('SELECT * FROM lottery_bets WHERE user_id=? AND issue_number=? ORDER BY id DESC LIMIT 1');
+        $stmt->bind_param('is', $uid, $issue);
+    } else {
+        $stmt = $conn->prepare('SELECT * FROM lottery_bets WHERE user_id=? ORDER BY id DESC LIMIT 1');
+        $stmt->bind_param('i', $uid);
+    }
+    $stmt->execute();
+    $r = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    if (!$r) {
+        api_success(['status' => false, 'isPending' => false, 'state' => 'none', 'winAmount' => 0, 'profitAmount' => 0], 'Success', ['serviceTime' => now_ms()]);
+    }
+    $row = bet_row_response($r);
+    $state = (int)($r['state'] ?? 2);
+    $isPending = $state === 2;
+    $isWin = $state === 1;
+    $winAmount = (float)($row['winAmount'] ?? 0);
+    api_success([
+        'status' => $isPending ? null : $isWin,
+        'state' => $state,
+        'statusText' => $row['status'],
+        'isPending' => $isPending,
+        'isWin' => $isWin,
+        'amount' => $winAmount,
+        'winAmount' => $winAmount,
+        'profitAmount' => (float)$row['profitAmount'],
+        'winLoseAmount' => (float)$row['winLoseAmount'],
+        'issueNumber' => (string)$r['issue_number'],
+        'orderNo' => (string)$r['order_no'],
+        'premium' => (string)($r['premium'] ?? ''),
+        'result' => $row,
+        'balance' => (float)(current_user()['balance'] ?? 0),
+    ], 'Success', ['serviceTime' => now_ms()]);
 }
+
+/**
+ * Bet place — dhaniwin flow:
+ *   stake = amount * betMultiple * selectionCount
+ *   fee   = stake * lottery_fee_rate (default 2%)
+ *   result publish hone par auto settle (GameEnd wallet entry).
+ */
 function handle_lottery_bet(string $path, array $d): void
 {
-    $u=require_login_user();
-    $game=first_value($d,['gameCode'],'WinGo_30S');
-    if (stripos($path,'K3Bet')!==false && stripos($game,'K3')===false) $game='K3_1M';
-    if (stripos($path,'D5Bet')!==false && !le_is_d5($game)) $game='D5_1M';
-    if (stripos($path,'MotoRaceBet')!==false && !le_is_moto($game)) $game='MotoRace_1M';
-    if (stripos($path,'TrxWinGoBet')!==false && stripos($game,'TrxWinGo')===false) $game='TrxWinGo_1M';
+    $u = require_login_user();
+    $game = dwl_normalize_game((string)first_value($d, ['gameCode', 'game_code'], 'WinGo_30S'));
+    if (stripos($path, 'K3Bet') !== false && !dwl_is_k3($game)) $game = 'K3_1M';
+    if (stripos($path, 'D5Bet') !== false && !dwl_is_d5($game)) $game = 'D5_1M';
+    if (stripos($path, 'MotoRaceBet') !== false && !dwl_is_moto($game)) $game = 'MotoRace_1M';
+    if (stripos($path, 'TrxWinGoBet') !== false && !str_contains($game, 'TrxWinGo')) $game = 'TrxWinGo_1M';
+    if (stripos($path, 'VideoWinGoBet') !== false && !str_contains($game, 'WinGo')) $game = 'WinGo_1M';
 
-    [$amount,$multiple,$requested_stake] = le_total_amount_from_request($d);
-    if($requested_stake<=0) api_error('Invalid bet amount',401,401);
-    $issue=first_value($d,['issueNumber','issueNo'],lottery_issue($game)['issueNumber']);
-    $content=le_bet_content_from_request($d);
-    $settings=le_get_settings($game);
-    
-    $debit=round($requested_stake,2); // Total amount to deduct from balance
-    $fee=round($debit*((float)$settings['fee_percent'])/100,2);
-    $stake=round($debit-$fee,2); // Real amount used for winning calculation
-    $state=2; // 2 = pending, result ke baad settle hoga
-    $premium='';
-    $winLose=0.0;
-    $order='LT'.date('ymdHis').random_int(1000,9999);
-    $newBalance=(float)$u['balance'] - $debit;
-
-    $conn=db();
-    if($conn){
-        // Ensure columns exist proactively
-        ensure_lottery_columns($conn);
-        
-        $uid=(int)$u['id'];
-        @$conn->begin_transaction();
-        
-        $stmt=$conn->prepare('SELECT balance FROM users WHERE id=? FOR UPDATE');
-        if (!$stmt) { $err = $conn->error ?: 'Unknown sync error'; @$conn->rollback(); api_error('DB error 1: '.$err, 500, 500); }
-        $stmt->bind_param('i',$uid); $stmt->execute(); $row=$stmt->get_result()->fetch_assoc();
-        $stmt->close();
-        
-        $balance=(float)($row['balance'] ?? $u['balance'] ?? 0);
-        if($balance < $debit){ @$conn->rollback(); api_error('Insufficient balance',142,142); }
-        $newBalance=round($balance-$debit,2);
-        
-        $stmt=$conn->prepare('INSERT INTO lottery_bets(user_id, order_no, game_code, issue_number, bet_content, amount, bet_multiple, real_amount, fee, premium, state, win_lose_amount, created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,NOW())');
-        if (!$stmt) { $err = $conn->error ?: 'Unknown prepare error or commands out of sync'; @$conn->rollback(); api_error('DB error 2: '.$err, 500, 500); }
-        $stmt->bind_param('issssdiddsid',$uid,$order,$game,$issue,$content,$amount,$multiple,$stake,$fee,$premium,$state,$winLose);
-        if(!$stmt->execute()){ $err = $stmt->error ?: $conn->error; @$conn->rollback(); api_error('Bet insert failed: '.$err,500,500); }
-        $stmt->close();
-        
-        $remark=$game.' '.$content.' issue '.$issue;
-        $debitResult=wallet_apply_delta($conn,$uid,-$debit,'GameBet',$order,$remark,$content,'ARLottery',['gameCode'=>$game,'issueNumber'=>$issue,'fee'=>$fee,'stake'=>$stake]);
-        if(!$debitResult){@$conn->rollback();api_error('Balance update failed',500,500);}
-        $newBalance=(float)$debitResult['after'];
-        $stmt=$conn->prepare('UPDATE users SET total_bet=total_bet+? WHERE id=?');
-        if($stmt){$stmt->bind_param('di',$debit,$uid);$stmt->execute();}
-        wallet_apply_turnover($conn,$uid,$debit,$order);
-        v34_record_agent_commissions($conn,$uid,$order,$stake);
-        
-        @$conn->commit();
+    $contents = le_bet_contents_from_request($d);
+    if (!$contents) {
+        api_error('Invalid bet selection', 401, 401);
     }
-    api_success(['orderNo'=>$order,'issueNumber'=>$issue,'gameCode'=>$game,'state'=>2,'isPending'=>true,'isWin'=>false,'amount'=>0,'winAmount'=>0,'winLoseAmount'=>0,'balance'=>$newBalance,'msg'=>'Bet accepted. Result ke baad settle hoga.'], 'Success', ['serviceTime'=>now_ms()]);
+    $betContent = le_bet_content_from_request($d);
+    [$amount, $multiple, $stake] = le_total_amount_from_request($d, count($contents));
+    if ($amount <= 0 || $stake <= 0) {
+        api_error('Invalid bet amount', 401, 401);
+    }
+
+    $conn = db();
+    if (!$conn) api_error('Database connection failed', 500, 500);
+
+    $issueData = dwl_issue_data($game);
+    $issue = (string)first_value($d, ['issueNumber', 'issue_no', 'issue'], (string)$issueData['issueNumber']);
+
+    // DhaniWin jaisa: jo issue client bhejta hai wahi accept hota hai. Agar
+    // koi future issue aa jaye to running period par clamp kar dete hain,
+    // taaki bet pending na atke aur apne aap settle ho jaye.
+    $runningIssue = (string)$issueData['nextIssueNumber'];
+    if (strcmp($issue, $runningIssue) > 0) {
+        $issue = $runningIssue;
+    }
+
+    $feeRate = dwl_fee_rate($game);
+    $fee = round($stake * $feeRate, 2);
+    $realAmount = round($stake - $fee, 2);
+    $state = 2; // pending
+    $order = 'LOT' . date('ymdHis') . mt_rand(1000, 9999);
+
+    if (function_exists('ensure_lottery_columns')) {
+        ensure_lottery_columns($conn);
+    }
+
+    $uid = (int)$u['id'];
+    @$conn->begin_transaction();
+    $stmt = $conn->prepare('SELECT balance FROM users WHERE id=? FOR UPDATE');
+    if (!$stmt) { @$conn->rollback(); api_error('DB error: ' . ($conn->error ?: 'prepare failed'), 500, 500); }
+    $stmt->bind_param('i', $uid);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    $balance = (float)($row['balance'] ?? $u['balance'] ?? 0);
+    if ($balance < $stake) { @$conn->rollback(); api_error('Insufficient balance', 142, 142, ['balance' => $balance]); }
+
+    $stmt = $conn->prepare('INSERT INTO lottery_bets(user_id, order_no, game_code, issue_number, bet_content, amount, bet_multiple, real_amount, fee, premium, state, win_lose_amount, created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,NOW())');
+    if (!$stmt) { @$conn->rollback(); api_error('DB error: ' . ($conn->error ?: 'prepare failed'), 500, 500); }
+    $premium = '';
+    $winLose = 0.0;
+    $stmt->bind_param('issssdiddsid', $uid, $order, $game, $issue, $betContent, $amount, $multiple, $realAmount, $fee, $premium, $state, $winLose);
+    if (!$stmt->execute()) { $err = $stmt->error ?: $conn->error; $stmt->close(); @$conn->rollback(); api_error('Bet insert failed: ' . $err, 500, 500); }
+    $stmt->close();
+
+    $remark = $game . ' ' . $betContent . ' issue ' . $issue;
+    $debit = wallet_apply_delta($conn, $uid, -$stake, 'GameBet', $order, $remark, $betContent, 'ARLottery', [
+        'gameCode' => $game, 'issueNumber' => $issue, 'fee' => $fee, 'stake' => $stake, 'betCount' => count($contents),
+    ]);
+    if (!$debit) { @$conn->rollback(); api_error('Balance update failed', 500, 500); }
+    $newBalance = (float)$debit['after'];
+
+    $stmt = $conn->prepare('UPDATE users SET total_bet=total_bet+? WHERE id=?');
+    if ($stmt) { $stmt->bind_param('di', $stake, $uid); $stmt->execute(); $stmt->close(); }
+    wallet_apply_turnover($conn, $uid, $stake, $order);
+    v34_record_agent_commissions($conn, $uid, $order, $stake);
+
+    @$conn->commit();
+
+    // Just-finished period par bet hote hi turant settle ho sakta hai.
+    if (dwl_issue_closed($game, $issue)) {
+        le_settle_pending_bets($game, $issue, $uid, $order);
+        $fresh = current_user() ?: $u;
+        $newBalance = (float)($fresh['balance'] ?? $newBalance);
+    }
+
+    api_success([
+        'orderNo' => $order,
+        'issueNumber' => $issue,
+        'gameCode' => $game,
+        'amount' => $amount,
+        'betMultiple' => $multiple,
+        'betCount' => count($contents),
+        'betAmount' => $stake,
+        'fee' => $fee,
+        'realAmount' => $realAmount,
+        'state' => 2,
+        'isPending' => true,
+        'isWin' => false,
+        'winAmount' => 0,
+        'winLoseAmount' => 0,
+        'balance' => $newBalance,
+        'msg' => 'Bet accepted.',
+    ], 'Success', ['serviceTime' => now_ms()]);
 }
 
+/**
+ * Diagnostics: /api/Diag/WinGo?key=<APP_SECRET ke pehle 10 char>
+ * Upload ke baad ek baar khol ke check kar lein ki sab kuch chal raha hai.
+ */
+function handle_wingo_diagnostics(array $d): void
+{
+    $key = (string)first_value($d, ['key', 'token'], '');
+    $expected = dwl_diag_key();
+    $isAdmin = false;
+    // Admin panel me logged in ho to key ki zaroorat nahi.
+    if (session_status() !== PHP_SESSION_ACTIVE && PHP_SAPI !== 'cli') {
+        @session_name('dhaniwin_admin');
+        @session_start();
+    }
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        $isAdmin = !empty($_SESSION['dw_admin_id']);
+    }
+    if ($key !== $expected && !$isAdmin) {
+        api_error('Diagnostics key required. Wahi key jo admin1 panel ke WinGo page par diya hai.', 403, 403);
+    }
+    $conn = db();
+    $code = dwl_normalize_game((string)first_value($d, ['gameCode'], 'WinGo_30S'));
+    $issue = dwl_issue_data($code);
+    $history = dwl_history_page($code, 1, 3);
+    $dbTables = [];
+    foreach (['users', 'lottery_bets', 'lottery_results', 'lottery_game_settings', 'financial_records'] as $table) {
+        $exists = false;
+        if ($conn) {
+            $res = @$conn->query("SHOW TABLES LIKE '" . $conn->real_escape_string($table) . "'");
+            $exists = $res instanceof mysqli_result && $res->num_rows > 0;
+        }
+        $dbTables[$table] = $exists;
+    }
+    $settings = le_get_settings($code);
+    api_success([
+        'version' => 'maanwin-wingo-dhaniwin-parity',
+        'php' => PHP_VERSION,
+        'db' => $conn ? 'connected' : 'NOT CONNECTED — api/_core/config.php check karein',
+        'dbUser' => DB_USER,
+        'dbName' => DB_NAME,
+        'tables' => $dbTables,
+        'demoMode' => defined('DEMO_MODE') ? (bool)DEMO_MODE : null,
+        'game' => $code,
+        'issue' => $issue,
+        'rates' => dwl_display_rates($code),
+        'payoutSettings' => $settings,
+        'feeRate' => dwl_fee_rate($code),
+        'historySample' => $history['list'],
+        'upstream' => function_exists('dwl_upstream_status') ? dwl_upstream_status() : null,
+        'serverTime' => date('c'),
+    ], 'Success', ['serviceTime' => now_ms()]);
+}
 
 function recharge_wheel_money_total(int $userId): float
 {

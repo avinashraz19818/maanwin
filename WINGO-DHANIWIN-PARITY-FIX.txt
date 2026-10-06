@@ -1,0 +1,101 @@
+==========================================================================
+ MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
+==========================================================================
+
+KYA THEEK HUA (short me)
+------------------------
+Pehle MaanWin ka lottery engine DhaniWin se alag behave kar raha tha:
+  * issue number / period ka gamt (lag) alag tha -> countdown aur result
+    match nahi karte the
+  * history list me "chal raha" (running) period ka result pehle hi dikh
+    jata tha, aur row 0 par number "0" aata tha
+  * K3 / 5D / MotoRace me number ki jagah dice/digits ki string aa rahi thi
+  * K3 me jo bet array form me aati thi (["SumOddEven_Odd"]) wo "Array" ban
+    kar save hoti thi -> galat result (PHP warning bhi aa rahi thi)
+  * payout rates MaanWin ke purane the (Number 9, Color 2.0/1.5, BigSmall 2.0)
+  * webSocketUrl blank tha
+  * game list sirf 1 category ki thi (WinGo) — baaki games list me nahi aate the
+  * history ka totalPage/totalCount fix 50/500 tha
+
+Ab sab kuch DhaniWin jaisa hai (live dhaniwin.club9.eu.cc se match karke):
+  * issueNumber   = jo period abhi khatam hua (jiska result publish hai)
+    nextIssueNumber = jo period abhi chal raha hai (countdown isi ka)
+  * history page 1 ka pehla row = latest settled result (0 nahi)
+  * K3  : premium = "4,6,6", number/numberValue = sum (16), color = ""
+  * 5D  : premium = "87843", number/numberValue = sum (30), color = ""
+  * Moto: premium = poori rank list, number = winner (1st car), color = ""
+  * WinGo: number 0-9, color red / green / violet (0 = red,violet · 5 = green,violet)
+  * rates bilkul DhaniWin jaise (playTypeId 50+):
+      WinGo / TrxWinGo : green 1.80 · red 1.80 · violet 4.50 · Num 8.20 ·
+                         Big 1.80 · Small 1.80
+      K3  : SumNum 3->207.36 ... 10/11->7.68 ... 18->207.36, SumBS/SumOE 2.00,
+            NumSame2 13.83 · NumSame2Mult 69.12 · NumSame3 207.36 ·
+            NumSame3All 34.56 · NumDiff3 34.56 · NumNear3All 8.64 · NumDiff2 6.91
+      5D  : har position Num 9.00, BigSmall/OddEven/Sum 2.00
+      Moto: First/Second/Third Num 9.00, BigSmall/OddEven 2.00
+  * GetGameList ab DhaniWin jaisi 5 categories deta hai
+      (gameType 100 WinGo · 105 MotoRace · 102 5D · 101 K3 · 103 TrxWinGo)
+  * webSocketUrl = wss://ws-pro.ar-lottery01.com (same AR provider)
+  * GetGameInfo me issue ka pura block (startTime/endTime/issueNumber/
+    nextIssueNumber/intervalMinute/seconds/countdown/isLocked/current) bhi
+    aa raha hai
+  * settlement DhaniWin rule par: bet us issue par band hota hai jab clock
+    ek period aage badh jata hai (strcmp < 0), phir payout credit hota hai
+  * Array form me aa rahi betContent ab sahi save + settle hoti hai
+  * mysqli "already closed" wala fatal bhi fix hai: connection zinda hai to
+    reuse, mara ho to naya connect (purane build me ek baar fail hone par
+    poora API mar jata tha — error_log me yahi fatal dikh raha tha)
+  * har API response par Cache-Control: no-store (stale countdown/result
+    nahi dikhega)
+  * /webapi/kv/issue/* aur /WinGo/WinGo_30S.json ab naye draw-router se
+    serve hote hain (purane frozen .json files override ho jaate hain)
+
+ADMIN PANEL ME NAYA
+-------------------
+Admin > WinGo tab:
+  * "Diagnostics" button — WinGo engine ka live health check
+    (DB, tables, aaj ka issue, rates, history sample, upstream status)
+  * Fee % ab per game lagta hai (0 chhodo to 2% default)
+  * Force mode: auto / win / lose — result usi hisaab se banega
+  * MotoRace 1M/3M/5M/10M bhi game select list me aa gaye
+
+OPTIONAL — LIVE UPSTREAM (asli draw provider)
+---------------------------------------------
+Dena ho to Admin panel me set kar dein:
+  lottery_upstream_url = https://api.devlopedwithzayro.site/api/webapi
+  lottery_upstream_key = <aapki API key>
+Blank chhoda to kuch bhi bahar nahi jayega — sab kuch local engine karega.
+Aapka balance, user, wallet, recharge, withdraw 100% aapke apne database
+par hi chalta hai (bahar kuch nahi jaata).
+
+UPLOAD KAISE KAREIN (cPanel) — 2 minute
+---------------------------------------
+1) cPanel > File Manager > public_html (wahi folder jisme index.html hai).
+2) Purani files ka backup rakh lein (select all > Compress) — optional.
+3) Ye ZIP upload karein aur "Extract" karein -> SAB ko overwrite karne dein.
+   Koi file delete nahi hoti; sirf ye 8 files badalti hain:
+        .htaccess
+        api/_router.php
+        api/_draw_router.php
+        api/_lottery_upstream.php          (NAYI file)
+        api/_core/bootstrap.php
+        api/_core/lottery_dhaniwin.php     (NAYI file)
+        api/_core/lottery_engine.php
+        admin1/index.php
+4) Bas. Database import karne ki zaroorat NAHI hai — tables khud ban/repair
+   ho jaate hain (naya column `source`, `result_queue` table, index repair).
+
+UPLOAD KE BAAD CHECK
+--------------------
+1) Admin > WinGo > "Diagnostics" -> DB = connected, game ka issue/rates dikhe.
+2) Site khol kar WinGo_30S page: countdown chalna chahiye, result list me
+   latest number dikhna chahiye, bet lagne par balance turant kam ho aur
+   period band hone ke baad win/loss popup + wallet credit aa jaye.
+3) K3 me bhi ek test bet (Odd/Even) — ab sahi record + settle hoga.
+
+NOTE
+----
+* Purane frozen files (webapi/kv/issue/*, MotoRace/*.html) jaisi hain waise
+  rakhi gayi hain; naye .htaccess rules unko runtime par override karte hain.
+* `api/error_log` aur `api/_core/bet_debug.log` ZIP me nahi hai (debug files
+  hain) — agar server par purani pade hon to delete kar dein.
