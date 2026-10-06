@@ -2,6 +2,33 @@
  MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
 ==========================================================================
 
+SABSE NAYA UPDATE (r11) — POPUP WAPAS (r10 ka side-effect) + REGISTER PAGE FIX
+--------------------------------------------------------------------------------
+1) WIN/LOSS POPUP BILKUL NAHI AA RAHA THA — theek ho gaya
+   Wajah: popup wala code result milte hi pending bet ko map se DELETE kar deta
+   tha, AUR USKE BAAD history me us period ka row dhoondhta tha. r10 me humne
+   popup ka check zero se pehle hi shuru kar diya tha, isliye pehla check result
+   ke saath hi bet delete kar deta tha — aur agar history list us waqt tak
+   update na hui ho to popup kabhi nahi khulta tha.
+   Fix (js/BetRule-DnzMp4C6.js + js/useWingo-RHrx_fex.js):
+     * ab pehle history row check hoti hai, sab ready hone ke BAAD hi bet delete
+       hota hai aur popup khulta hai
+     * pre-poll (countdown 4 se, har 900ms) ab history ko bhi refresh karta hai,
+       isliye row turant aa jati hai aur popup zero par hi khul jata hai
+     * result na aane par retry hota rehta hai (15 second tak), bet lost nahi hota
+
+2) REGISTER PAGE KHAALI — asli wajah mili
+   Site ki config file webapi/kv/config.js me registerConfig me
+   registerMobile = "0" aur registerEmail = "0" tha, isliye register page ka
+   form section render hi nahi hota tha (upar sirf logo/header dikhta tha).
+   Fix: config.js me
+       registerMobile = "1"   (mobile number se register)
+       registerEmail  = "1"   (email se register ka tab bhi)
+       isInvitecode   = "0"   (invite code optional — bina code bhi register ho sake;
+                               invite link se aayein to code khud bhar jata hai)
+   SMS/Email OTP verification band hi rakhi (0) — simple password registration.
+   NOTE: ye file ZIP me hai, extract karne par apne aap overwrite hogi.
+
 SABSE NAYA UPDATE (r10) — POPUP TIMING + SIRF EK EFFECT + REGISTER PAGE
 ------------------------------------------------------------------------
 1) POPUP 3-4 SECOND LATE AATA THA — ab timer zero hote hi aata hai
