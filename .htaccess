@@ -34,8 +34,9 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 # Dynamic local lottery issue/json routes
 # ------------------------------
 # Works for both app builds: /webapi/kv/issue/... and /webapi/v/issue/...
-RewriteRule ^webapi/(kv|v)/issue/([^/]+)$ api/_draw_router.php?gameCode=$2 [QSA,L]
-RewriteRule ^(WinGo|K3|D5|MotoRace|TrxWinGo)/(.+\.json)$ api/_draw_router.php?path=$1/$2 [QSA,L]
+RewriteRule ^webapi/(kv|v)/issue/([A-Za-z0-9_]+)(\.json|\.html)?$ api/_draw_router.php?gameCode=$2 [QSA,L]
+RewriteRule ^(WinGo|TrxWinGo|K3|D5|5D|MotoRace|MotoRacing)/([A-Za-z0-9_]+)/GetHistoryIssuePage(\.json|\.html)?$ api/_draw_router.php?path=$1/$2/GetHistoryIssuePage [QSA,L]
+RewriteRule ^(WinGo|TrxWinGo|K3|D5|5D|MotoRace|MotoRacing)/([A-Za-z0-9_]+)(/GetGameIssue)?(\.json|\.html)?$ api/_draw_router.php?path=$1/$2 [QSA,L]
 
 
 # ------------------------------
