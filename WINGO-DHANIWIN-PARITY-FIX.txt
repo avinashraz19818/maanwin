@@ -2,6 +2,33 @@
  MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
 ==========================================================================
 
+SABSE NAYA UPDATE (r12) — PARTICLES SIRF POPUP KE AREA ME + BACKGROUND PAKKA
+-----------------------------------------------------------------------------
+1) PARTICLES ab DHANIWIN JAISE — sirf popup ke aas-paas
+   Aapne screenshot me dekha: particles poore game page par (betting panel ke
+   upar tak) ud rahe the. Dhaniwin me particles sirf popup ke apne area me
+   rehte hain. Fix (js/mnw-win-particles.js + js/Winning-BwkSUlkB.js):
+     * canvas ab poore page ka nahi — popup ke apne box (thoda 26px margin) ka
+       hota hai, isliye particles popup se bahar nahi jaate
+     * burst bhi chhota aur halka hai (ek main wave + ek chhoti wave), sirf
+       popup khulne par — aur band hone par turant ruk jata hai
+     * star / WIN text / firework — kuch nahi (pehle se hi hata hua hai),
+       bas wahi confetti jo dhaniwin jaisa lagta hai
+
+2) LOGIN / REGISTER ka background — dono taraf se pakka
+   * assets/ar_saas11/img_loginBG-c742cc33.webp — ye ASLI file hai (43,470 bytes,
+     wahi dark casino-room image jo original me hai) aur ZIP me hai
+   * Uper se runtime fallback bhi lagaya hai: agar theme/CSS kisi wajah se
+     background na laga paye, to script khud /archives wala wahi image
+     (.login-wrapper par) laga deti hai — sirf /login aur /register page par.
+     Pehle se sahi bg ho to kuch nahi chhedta.
+
+3) REGISTER PAGE — ab original jaisa (r11 ka fix)
+   webapi/kv/config.js me registerMobile/registerEmail = 1 kiya gaya, isliye
+   form render ho raha hai: Mobile (+91), Password, Confirm Password,
+   Invite Code (optional) + Register + Password Login — bilkul aapke
+   screenshot (original) jaisa. Invite code khali chhoda ja sakta hai.
+
 SABSE NAYA UPDATE (r11) — POPUP WAPAS (r10 ka side-effect) + REGISTER PAGE FIX
 --------------------------------------------------------------------------------
 1) WIN/LOSS POPUP BILKUL NAHI AA RAHA THA — theek ho gaya
