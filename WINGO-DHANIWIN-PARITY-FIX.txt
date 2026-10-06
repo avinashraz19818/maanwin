@@ -2,6 +2,38 @@
  MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
 ==========================================================================
 
+SABSE NAYA UPDATE (r10) — POPUP TIMING + SIRF EK EFFECT + REGISTER PAGE
+------------------------------------------------------------------------
+1) POPUP 3-4 SECOND LATE AATA THA — ab timer zero hote hi aata hai
+   Wajah: game code popup ko countdown ke "1" par
+        skin-1: 3200 ms baad  /  skin-2 (aap ka page): 2200 ms baad
+   call karta tha, aur ek hi baar. Upar se result server se aata hai.
+   Fix (js/useWingo-RHrx_fex.js + js/BetRule-DnzMp4C6.js):
+     * popup ka check ab countdown 4 se hi shuru ho jata hai aur har 900 ms
+       repeat hota hai — yani "zero se 4 second pehle se call" chalu rehta hai,
+       aur jaise hi server par result publish hota hai, popup TURANT khul jata
+       hai (usually timer zero hote hi). Result aane ke baad poll khud band.
+     * pehle agar result thoda late aata to pending bet MAP se DELETE ho jata
+       tha (popup phir kabhi nahi aata) — ab wo delete nahi hota, retry milta hai
+     * popup ka auto-close (3 second) dono case (win/lose) me chalta hai
+
+2) SIRF EK PARTICLE EFFECT (confetti) — popup ke saare purane animations off
+   Aapne bola "extra particles dot dot jaisa" aa raha hai. Popup ke andar 3
+   animation layers thi: WIN text, star sparkles, aur firework. Teeno hata diye
+   (koi lottie load nahi hota) — ab sirf wahi confetti burst hai jo popup ke
+   saath aata hai, zero hone par, aur app frame ke andar.
+
+3) REGISTER PAGE KHAALI AA RAHA THA — fix
+   Register route ki files server par 404 thi, isliye page render nahi hota tha.
+   ZIP me ab ye sab hain (asli build wali same files):
+     js/index-ClYVdsbo.js (register page) · js/index-CLh2rJgZ.js (form)
+     js/index-Ct4Z1r3v.js (login page) · js/captcha-0PXg8Xrl.js
+     js/rememberPwd-hUgwXodA.js · js/ServiceIcon-D4gGFpRi.js
+     css/index-DsX7w4SE.css · css/index-Bq7CQUeN.css · css/index-DKyLuo06.css
+     css/captcha-BZjsE2eL.css · css/rememberPwd-CblfbpBy.css
+     css/ServiceIcon-Dydbe_jb.css
+     assets/ar_saas11/img_loginBG-c742cc33.webp  (login/register ka background)
+
 SABSE NAYA UPDATE (r9) — STAR particles hataye (sirf confetti)
 ----------------------------------------------------------------
 Aapne screenshot me jo white/cream STAR (chamakte sitare) wale particles dikhe
