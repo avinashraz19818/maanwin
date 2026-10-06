@@ -2,6 +2,29 @@
  MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
 ==========================================================================
 
+SABSE NAYA UPDATE (r5) — POPUP KE PARTICLES + MISSING CATEGORY IMAGES
+----------------------------------------------------------------------
+1) Winning popup ke particles (DhaniWin jaise sparkle/confetti)
+   Wajah: maanwin ke bundle me winning popup ka DOOSRA lottie container
+   DOM me hi nahi tha (ref bind nahi tha) — isliye lottie load fail hota tha
+   aur error chup-chaap catch ho jata tha. Popup aata tha, particles gayab.
+   Fix (js/Winning-BwkSUlkB.js):
+     * missing `.winning-head` container add kar diya -> ab win_animation
+       (sparkle particles wala lottie) sahi jagah par play hota hai
+     * upar se ek self-contained canvas particle burst bhi lagaya hai:
+       agar kisi wajah se lottie load na ho (file 404 / purana cache),
+       tab bhi popup ke saath orange-gold particles PAKKA dikhenge
+     * popup band hote hi particles khud ruk jate hain (koi extra load nahi)
+   NOTE: isi file me sirf ye 2 cheezein add hui hain — baaki component same hai,
+   isliye popup ka baaki kaam (result, amount, auto-close) waisa hi chalega.
+
+2) Top wale lottery category icons (WinGo / K3 / 5D / TrxWinGo / MotoRace)
+   Aapki site par ye do files 404 thi, isliye icon khaali aa raha tha:
+       assets/ar_saas11/lottery_category_active-e1455a13.webp  (active icon)
+       assets/common/lottery_category-5a8fb116.webp            (default icon)
+   Dono ASLI files (maanwin.ai wali) ab ZIP me hain — extract ke baad
+   category card ke icons dikhne lagenge.
+
 SABSE NAYA UPDATE (r4) — "result 1 period aage" wala issue
 ------------------------------------------------------------------
 Aapne bataya tha: "result to aa rha hai, lekin period 1 piche hai to result
@@ -155,7 +178,7 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
 1) cPanel > File Manager > public_html (wahi folder jisme index.html hai).
 2) Purani files ka backup rakh lein (select all > Compress) — optional.
 3) Ye ZIP upload karein aur "Extract" karein -> SAB ko overwrite karne dein.
-   Koi file delete nahi hoti; sirf ye 12 files badalti hain:
+   Koi file delete nahi hoti; sirf ye 15 files badalti hain:
         .htaccess
         api/_router.php
         api/_draw_router.php
@@ -166,6 +189,9 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
         admin1/index.php
         js/record-BVIB9KLd.js              (NAYI file — 404 fix)
         css/record-DGJWY99K.css            (NAYI file — Record tab ka colour)
+        js/Winning-BwkSUlkB.js             (winning popup ke particles)
+        assets/ar_saas11/lottery_category_active-e1455a13.webp  (NAYI)
+        assets/common/lottery_category-5a8fb116.webp            (NAYI)
         wingo-fix-check.php                (NAYI file — deployment check)
         WINGO-DHANIWIN-PARITY-FIX.txt      (ye hi note file)
    `api/_core/config.php` (aapki DB settings) ZIP me JAAN-BOOJH kar nahi hai,
@@ -204,6 +230,11 @@ UPLOAD KE BAAD CHECK
 3) K3 me bhi ek test bet (Odd/Even) — ab sahi record + settle hoga.
 4) WinGo page ka "Trend" tab: 0-9 wale columns me aane/na aane ki ginti
    (khali column nahi) dikhni chahiye.
+4b) Winning popup: jeetne par popup ke saath orange-gold PARTICLES
+   (sparkle burst) dikhne chahiye — dhaniwin jaisa. Agar particles na dikhein
+   to Ctrl+Shift+R (hard refresh) ek baar kar lein, purana js cache ho sakta hai.
+4c) Top ke lottery category cards (WinGo / K3 / 5D...) me icon dikhna chahiye
+   (pehle khaali tha).
 5) WinGo page ka "Record" (Game history) tab: header Period / Number /
    Big or Small / Color dikhna chahiye, aur Color column me chhote red/green/
    violet dots aane chahiye (khaali column nahi).
