@@ -1,6 +1,6 @@
 /* maanwin-win-particles: winning popup par dhaniwin jaise particles.
    index.php ise har page me load karta hai (defer). Self-contained, koi dependency nahi.
-   Sirf tab chalta hai jab popup actually khula ho (v-show display:none ko chhupata hai). */
+   Sirf tab chalta hai jab popup actually khula ho (v-show display:none se chhupata hai). */
 /* MAANWIN win-popup particles (DhaniWin parity) — self contained, no deps.
    Sirf tab chalta hai jab winning popup actually VISIBLE ho (v-show), aur poora
    effect app container (#app) ke andar rehta hai. */
@@ -17,9 +17,6 @@
     var s = document.createElement("style");
     s.id = "mnw-win-fx-style";
     s.textContent =
-      ".winning-head{position:fixed!important;left:50%!important;transform:translate(-50%,-50%)!important;" +
-      "pointer-events:none!important;z-index:2147482000;opacity:.97;height:150px;max-height:40vh;overflow:visible}" +
-      ".winning-head svg{overflow:visible}" +
       "#mnw-win-fx{position:fixed;pointer-events:none;z-index:2147483000}";
     (document.head || document.documentElement).appendChild(s);
   }

@@ -2,6 +2,26 @@
  MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
 ==========================================================================
 
+SABSE NAYA UPDATE (r8) — "WIN" TEXT HATAYA + SIRF EK PARTICLE EFFECT
+---------------------------------------------------------------------
+Aapke screenshot me popup ke upar bada "WIN" likha aa raha tha aur particles
+do tarah ke chal rahe the (ek popup ke saath, doosra bhi).
+
+Wajah: assets/win_animation-5kyrcu_e.json khud "WIN" text wala animation hai —
+usme Win_front.png / WIN_back.png = "WIN" ki images hain (aur 8 star layers =
+sparkles). Popup me pehle us lottie ka container hi nahi tha, isliye WIN text
+dikhta hi nahi tha; container add hone par WIN text + sparkles dono dikhne lage
+aur upar se canvas particles bhi — yani 2 effect.
+
+Ab (r8):
+  * popup se WIN text wala lottie container HATA diya -> WIN text nahi aayega
+  * sirf EK particle effect: wahi canvas sparkle/confetti burst (popup khulne
+    par chalta hai, band hone par ruk jata hai, app frame ke andar hi rehta hai)
+  * popup ka baaki sab same: ribbon + rocket emblem, Congratulations, result,
+    bonus, period aur "3 seconds auto close"
+  * doosre build ke .winning-head element ko hum chhoote bhi nahi (uska CSS
+    inject nahi hota)
+
 SABSE NAYA UPDATE (r7) — PARTICLES AB SIRF WINNING POPUP KE SATH
 -----------------------------------------------------------------
 Aapne notice kiya: WinGo page kholte hi particles aa jate the (popup se pehle).
