@@ -169,10 +169,16 @@ function dwl_calculate_issue(string $gameCode, int $timestamp): string
     $prefix = dwl_prefix($code);
     if ($interval <= 0) $interval = 60;
 
+    // Numbering bilkul upstream bridge jaisi (jo dhaniwin bhi use karta hai):
+    //   issue index = floor(secsSinceUtcMidnight / interval)   (0-based)
+    // Matlab 10:00:00 UTC (WinGo_30S) => 36000/30 = 1200 => "...51200".
+    // Pehle yahan `+1` tha, jiski wajah se history/result list ek period AAGE
+    // dikh rahi thi (dhaniwin head 51199, hum 51200 dikha rahe the).
     $utcDayStart = strtotime(gmdate('Y-m-d 00:00:00', $timestamp) . ' UTC');
     $secondsSinceMidnight = $timestamp - $utcDayStart;
-    $periodIndex = (int)floor($secondsSinceMidnight / $interval) + 1;
-    if ($periodIndex < 1) $periodIndex = 1;
+    if ($secondsSinceMidnight < 0) $secondsSinceMidnight += 86400;
+    $periodIndex = (int)floor($secondsSinceMidnight / $interval);
+    if ($periodIndex < 0) $periodIndex = 0;
 
     return sprintf('%s%s%04d', gmdate('Ymd', $timestamp), $prefix, $periodIndex);
 }
@@ -198,16 +204,15 @@ function dwl_running_issue(string $gameCode): string
  */
 function dwl_current_issue(string $gameCode): string
 {
-    return dwl_issue_by_offset($gameCode, 0);
+    // Closure/drawn checks ke liye "current" = chal raha (running) period.
+    // Bet x par settle tabhi hoti hai jab running x se aage badh jaye.
+    return dwl_running_issue($gameCode);
 }
 
 /** Just-finished period = jiska result publish ho chuka hai (dhaniwin "current"). */
 function dwl_display_issue(string $gameCode): string
 {
-    $interval = dwl_interval($gameCode);
-    $now = time() + (int)floor(dwl_grace_ms() / 1000);
-    $slot = intdiv($now, max(1, $interval)) - 1;
-    return dwl_calculate_issue($gameCode, $slot * $interval);
+    return dwl_issue_by_offset($gameCode, 0);
 }
 
 /** Purane code ke liye: offset 0 = just finished, 1 = usse pehle wala, ... */
@@ -234,13 +239,15 @@ function dwl_parse_issue(string $gameCode, string $issueNumber): ?array
     if (!$dayStart) {
         return null;
     }
+    // Upstream bridge ke hisaab se issue N ka window = [dayStart + N*i, +i).
+    $startTs = $dayStart + ($period * $interval);
     return [
         'date' => $date,
         'prefix' => $prefix,
         'period' => $period,
         'interval' => $interval,
-        'end_ts' => $dayStart + ($period * $interval),
-        'start_ts' => $dayStart + (($period - 1) * $interval),
+        'start_ts' => $startTs,
+        'end_ts' => $startTs + $interval,
     ];
 }
 
@@ -285,7 +292,9 @@ function dwl_issue_drawn(string $gameCode, string $issueNumber): bool
     if ($issue === '') {
         return false;
     }
-    return strcmp($issue, dwl_current_issue($gameCode)) <= 0;
+    // Result tabhi publish hota hai jab period khatam ho chuka ho (running se
+    // purana). Running period ka result "live" hota hai, use publish nahi karte.
+    return strcmp($issue, dwl_running_issue($gameCode)) < 0;
 }
 
 /** Issue apne period ka window / end time (ms). */
@@ -296,7 +305,8 @@ function dwl_issue_window(string $gameCode, string $issueNumber): array
         return [
             'startTime' => (int)$parsed['start_ts'] * 1000,
             'endTime' => (int)$parsed['end_ts'] * 1000,
-            'openTime' => (int)$parsed['end_ts'] * 1000,
+            // History me openTime = period ka START (upstream bhi yahi bhejta hai).
+            'openTime' => (int)$parsed['start_ts'] * 1000,
         ];
     }
     // Unknown format: current period par fallback (purane data ke liye).
@@ -324,10 +334,10 @@ function dwl_issue_data(string $gameCode): array
     $start = (int)(floor($boundaryNow / $periodMs) * $periodMs);
     $end = $start + $periodMs;
 
-    // 1-period lag: jo period abhi khatam hua uska result pehle se publish hai.
-    $lagStart = $start - $periodMs;
-    $issue = dwl_calculate_issue($code, (int)($lagStart / 1000));
-    $nextIssue = dwl_calculate_issue($code, (int)($start / 1000));
+    // Upstream/dhaniwin semantics: `issueNumber` = chal raha (running) period
+    // (countdown isi ka chalta hai), `nextIssueNumber` = uske baad wala period.
+    $issue = dwl_calculate_issue($code, (int)($start / 1000));
+    $nextIssue = dwl_calculate_issue($code, (int)($end / 1000));
     $secondsLeft = max(0, (int)ceil(($end - $now) / 1000));
     $isLocked = $secondsLeft <= 5;
     $lotteryCode = dwl_lottery_code($code);
@@ -726,7 +736,7 @@ function dwl_result_for_issue(string $gameCode, string $issueNumber, bool $save 
                 $detail = dwl_result_from_premium($code, $issue, (string)$row['premium']);
                 $detail['source'] = $storedSource !== '' ? $storedSource : 'stored';
                 $detail['id'] = (int)$row['id'];
-                $detail['open_time'] = (int)($row['open_time'] ?? 0);
+                $detail['open_time'] = dwl_open_time_ms($row['open_time'] ?? null, $code, $issue);
                 return $detail;
             }
         }
@@ -801,6 +811,7 @@ function dwl_result_for_issue(string $gameCode, string $issueNumber, bool $save 
 
     $detail = dwl_result_from_premium($code, $issue, $premium);
     $detail['source'] = $source;
+    $detail['open_time'] = (int)(dwl_issue_window($code, $issue)['openTime']);
 
     if ($conn && $save) {
         $stored = dwl_store_result($conn, $code, $issue, $detail, $source, true);
@@ -812,6 +823,31 @@ function dwl_result_for_issue(string $gameCode, string $issueNumber, bool $save 
         }
     }
     return $detail;
+}
+
+/**
+ * DB ka `open_time` (DATETIME string / NULL / ms) ko epoch-ms me badalta hai.
+ * Pehle ise seedha (int) karte the, jisse "2026-10-06 15:29:30" => 2026 ban
+ * jata tha aur history me openTime 2026 dikh raha tha.
+ */
+function dwl_open_time_ms($value, string $gameCode = '', string $issueNumber = ''): int
+{
+    if (is_numeric($value)) {
+        $num = (float)$value;
+        if ($num > 1e11) {
+            return (int)$num; // already ms
+        }
+        if ($num > 1e8) {
+            return (int)($num * 1000); // seconds
+        }
+    } elseif (is_string($value) && trim($value) !== '' && strtotime($value) !== false) {
+        return (int)strtotime($value) * 1000;
+    }
+    if ($gameCode !== '' && $issueNumber !== '') {
+        $window = dwl_issue_window($gameCode, $issueNumber);
+        return (int)$window['startTime'];
+    }
+    return 0;
 }
 
 function dwl_result_row($conn, string $code, string $issue): ?array
@@ -1428,7 +1464,7 @@ function dwl_history_page(string $gameCode, int $pageNo = 1, int $pageSize = 10)
     for ($i = 0; $i < $pageSize; $i++) {
         $issue = dwl_issue_by_offset($code, $offset + $i);
         $result = dwl_result_for_issue($code, $issue, true);
-        $list[] = dwl_history_item($code, $issue, $result, (int)($result['open_time'] ?? 0));
+        $list[] = dwl_history_item($code, $issue, $result);
     }
 
     $totalCount = dwl_history_total($code);

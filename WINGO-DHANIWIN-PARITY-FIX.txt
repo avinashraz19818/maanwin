@@ -2,6 +2,44 @@
  MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
 ==========================================================================
 
+SABSE NAYA UPDATE (r4) — "result 1 period aage" wala issue
+------------------------------------------------------------------
+Aapne bataya tha: "result to aa rha hai, lekin period 1 piche hai to result
+bhi 1 piche kar do." Wo theek ho gaya. Do cheezein galat thi:
+
+  1) ISSUE NUMBER 1 ZYADA (off-by-one)
+     Engine period nikaalte waqt din ke start se ginne me +1 laga raha tha,
+     jabki DhaniWin (aur uska API) 0 se ginta hai.
+     Example: 10:00:00 UTC = 36000 second, 30-second game me 36000/30 = 1200
+     -> issue ...51200. Pehle MaanWin ...51201 nikaal raha tha.
+     Ab calculation DhaniWin jaisi hai — negative (raat ke) case me bhi
+     same tarike se wrap hota hai.
+
+  2) RESULT LIST EK PERIOD AAGE
+     History list me "chal raha" period ka result pehli row me dikh raha tha.
+     DhaniWin me pehla row hamesha LAST SETTLED (khatam ho chuka) period ka
+     hota hai — jo result actually publish ho chuka hai.
+     Ab MaanWin bhi wahi karta hai:
+        * history page 1 ka head = pichhla khatam period
+          (jaise WinGo me ...51199 — ...51200 nahi, kyunki ...51200 abhi
+           chal raha hai aur uska result abhi bana hi nahi hai)
+        * us row ka openTime bhi DhaniWin se same (period ka start time,
+          milliseconds me) — pehle DB ke datetime se aata tha jis se
+          2026 jaisa galat value ban jata tha
+        * countdown / "current period" wala number abhi bhi RUNNING period
+          hi dikhata hai (...51200) — wahi DhaniWin ke GetGameIssue se aata
+          hai, aur settlement bhi usi rule par (issue khatam hote hi payout)
+        * GetGameInfo me issueNumber = running period,
+          nextIssueNumber = running + 1 (DhaniWin ke response se bilkul same)
+
+Matlab ab teen cheezein ek saath match karti hain:
+   running period + countdown   =  DhaniWin
+   history ka pehla result row  =  DhaniWin (last settled, same openTime)
+   next result / payout         =  DhaniWin (same number, same colour)
+
+Verify: aapke record list ka pehla row aur dhaniwin.club9.eu.cc ka pehla row
+same period + same number dikhna chahiye (ab dikhega).
+
 KYA THEEK HUA (short me)
 ------------------------
 Pehle MaanWin ka lottery engine DhaniWin se alag behave kar raha tha:
@@ -117,7 +155,7 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
 1) cPanel > File Manager > public_html (wahi folder jisme index.html hai).
 2) Purani files ka backup rakh lein (select all > Compress) — optional.
 3) Ye ZIP upload karein aur "Extract" karein -> SAB ko overwrite karne dein.
-   Koi file delete nahi hoti; sirf ye 11 files badalti hain:
+   Koi file delete nahi hoti; sirf ye 12 files badalti hain:
         .htaccess
         api/_router.php
         api/_draw_router.php
@@ -127,6 +165,7 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
         api/_core/lottery_engine.php
         admin1/index.php
         js/record-BVIB9KLd.js              (NAYI file — 404 fix)
+        css/record-DGJWY99K.css            (NAYI file — Record tab ka colour)
         wingo-fix-check.php                (NAYI file — deployment check)
         WINGO-DHANIWIN-PARITY-FIX.txt      (ye hi note file)
    `api/_core/config.php` (aapki DB settings) ZIP me JAAN-BOOJH kar nahi hai,
