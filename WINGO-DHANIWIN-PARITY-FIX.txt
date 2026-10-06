@@ -87,7 +87,7 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
 1) cPanel > File Manager > public_html (wahi folder jisme index.html hai).
 2) Purani files ka backup rakh lein (select all > Compress) — optional.
 3) Ye ZIP upload karein aur "Extract" karein -> SAB ko overwrite karne dein.
-   Koi file delete nahi hoti; sirf ye 10 files badalti hain:
+   Koi file delete nahi hoti; sirf ye 11 files badalti hain:
         .htaccess
         api/_router.php
         api/_draw_router.php
@@ -97,9 +97,31 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
         api/_core/lottery_engine.php
         admin1/index.php
         js/record-BVIB9KLd.js              (NAYI file — 404 fix)
+        wingo-fix-check.php                (NAYI file — deployment check)
         WINGO-DHANIWIN-PARITY-FIX.txt      (ye hi note file)
+   `api/_core/config.php` (aapki DB settings) ZIP me JAAN-BOOJH kar nahi hai,
+   isliye aapki DB details kabhi overwrite nahi hongi.
 4) Bas. Database import karne ki zaroorat NAHI hai — tables khud ban/repair
    ho jaate hain (naya column `source`, `result_queue` table, index repair).
+
+SABSE PEHLE — FIX LAGA YA NAHI (1 minute)
+----------------------------------------
+Browser me kholein:
+
+   https://<aapka-domain>/wingo-fix-check.php?key=<DIAG_KEY>
+
+<DIAG_KEY> Admin panel (admin1) > WinGo > "Diagnostics" par likha hota hai.
+(Admin me logged-in ho to bina key bhi khul jata hai.)
+
+Ye page batata hai:
+   * kaun-kaun si file server par NAYI hai, kaun PURANI, kaun MISSING
+   * app kahan se chal raha hai (PUBLIC_ROOT) + PHP version
+   * engine ka aaj ka issue / countdown / latest result (live)
+   * DB tables + lottery_results.source column ki haalat
+Agar koi file "PURANA" ya "MISSING" dikhe to ZIP theek jagah extract nahi
+hua — usi folder me extract karein jisme index.html aur api/ hai, aur
+"sab overwrite karein" chunein.
+Kaam ke baad is file ko server se DELETE kar dein.
 
 UPLOAD KE BAAD CHECK
 --------------------
