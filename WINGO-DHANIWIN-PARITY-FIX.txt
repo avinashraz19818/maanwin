@@ -42,9 +42,15 @@ Ab sab kuch DhaniWin jaisa hai (live dhaniwin.club9.eu.cc se match karke):
     band hai, isliye countdown/result humare apne engine se hi aate hain;
     pehle MaanWin yahan ek websocket URL bhej raha tha jis se frontend
     "connection" par atak jata tha)
-  * "Record" / bet-detail wala frontend chunk jo 404 de raha tha
-    (js/record-BVIB9KLd.js) wo bhi ab ZIP me hai — ye game page khulte hi
-    console me error deta tha
+  * Game history ("Record") panel: pehle js/record-BVIB9KLd.js hi server par
+    nahi tha (404). Ab wo file asli build (maanwin.ai) se li gayi hai —
+    scope bhi wahi (data-v-7b69a6af) jiska CSS aapka site load karta hai
+    (css/record-DGJWY99K.css). Isse:
+       - console ka 404 error gaya
+       - "Color" column me red / green / violet ke dots dikhne lage
+         (pehle CSS scope mismatch ki wajah se column khaali rehta tha)
+       - header ke naam bhi theek (Period / Number / Big or Small / Color)
+    ZIP me css/record-DGJWY99K.css bhi hai (agar wo file missing ho).
   * GetTrendStatistics ab wahi shape deta hai jo aapka frontend padhta hai:
     10 digits ka array (0-9) jismein har digit ke liye
     openCount / missingCount / avgMissing / maxContinuous
@@ -159,7 +165,10 @@ UPLOAD KE BAAD CHECK
 3) K3 me bhi ek test bet (Odd/Even) — ab sahi record + settle hoga.
 4) WinGo page ka "Trend" tab: 0-9 wale columns me aane/na aane ki ginti
    (khali column nahi) dikhni chahiye.
-5) SABSE ZAROORI — result match: WinGo page par jo number aaye usi period ka
+5) WinGo page ka "Record" (Game history) tab: header Period / Number /
+   Big or Small / Color dikhna chahiye, aur Color column me chhote red/green/
+   violet dots aane chahiye (khaali column nahi).
+6) SABSE ZAROORI — result match: WinGo page par jo number aaye usi period ka
    number dhaniwin.club9.eu.cc par bhi khol kar milayein. Dono same aana
    chahiye (period ke saath number + colour bhi).
    wingo-fix-check.php par "Result source" card me Reachable = HAAN dikhna

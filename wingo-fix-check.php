@@ -80,7 +80,8 @@ $checks = [
     ['api/_core/lottery_dhaniwin.php', 'function dwl_trend_stats', 'DhaniWin-parity engine'],
     ['api/_core/lottery_engine.php', 'function le_settle_pending_bets', 'settlement/wallet layer'],
     ['admin1/index.php', 'Diag/WinGo', 'admin WinGo tab + Diagnostics link'],
-    ['js/record-BVIB9KLd.js', '', 'missing "Record" chunk (404 fix)'],
+    ['js/record-BVIB9KLd.js', 'data-v-7b69a6af', 'Record chunk (404 fix + Color column CSS scope)'],
+    ['css/record-DGJWY99K.css', 'record-origin-I', 'Record route CSS (color dots styling)'],
 ];
 
 $rows = [];
