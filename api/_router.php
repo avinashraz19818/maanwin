@@ -247,7 +247,7 @@ switch ($path) {
     case 'Lottery/GetMyGameRecord': handle_lottery_record($data); break;
     case 'Lottery/GetTrendStatistics': handle_lottery_trend($data); break;
     case 'Lottery/GetWinLossResult': handle_win_loss($data); break;
-    case 'Lottery/GetWingoLiveUrl': api_success(['url'=>(string)dwl_setting('lottery_ws_url', 'wss://ws-pro.ar-lottery01.com'), 'webSocketUrl'=>(string)dwl_setting('lottery_ws_url', 'wss://ws-pro.ar-lottery01.com')]); break;
+    case 'Lottery/GetWingoLiveUrl': api_success(['url'=>'', 'isOpen'=>false]); break;
     case 'Diag/WinGo': handle_wingo_diagnostics($data); break;
     case 'Diagnostics/WinGo': handle_wingo_diagnostics($data); break;
     case 'Lottery/GetDragonList': api_success([]); break;
@@ -3150,8 +3150,11 @@ function bet_row_response(array $r): array { return le_response_row($r); }
 function handle_lottery_trend(array $d): void
 {
     $code = dwl_normalize_game((string)first_value($d, ['gameCode', 'game_code'], 'WinGo_30S'));
-    $pageSize = max(10, min(100, (int)first_value($d, ['pageSize', 'limit'], 50)));
-    api_success(dwl_trend($code, $pageSize), 'Success', ['serviceTime' => now_ms()]);
+    $window = max(10, min(100, (int)first_value($d, ['pageSize', 'limit', 'window'], 50)));
+    // MaanWin ka trend component (js/trend-*.js) `data.slice(0, 10)` chalata hai,
+    // isliye `data` ek flat 10-element stats array hona chahiye (dhaniwin ke naye
+    // build me yahi cheez `data.statistics` ke naam se aati hai).
+    api_success(dwl_trend_stats($code, $window), 'Success', ['serviceTime' => now_ms()]);
 }
 
 /**

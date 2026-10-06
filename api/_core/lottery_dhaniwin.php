@@ -1422,6 +1422,88 @@ function dwl_trend(string $gameCode, int $pageSize = 100): array
     return ['list' => $list, 'statistics' => $stats];
 }
 
+/**
+ * Trend tab ka `statistics` payload.
+ *
+ * Dhaniwin ka naya frontend `data.statistics` (10 x {appear, missing,
+ * maxContinuous}) padhta hai, lekin MaanWin ke build me trend component
+ * `data.slice(0, 10)` chalata hai — yaani `data` khud ek 10-element array hona
+ * chahiye jismein `missingCount / avgMissing / openCount / maxContinuous` ho.
+ * Isliye yahan array bhejte hain aur dono naming conventions ke aliases
+ * (appear = openCount, missing = missingCount) bhi rakh dete hain.
+ *
+ * Stats window = last $window issues (10..100). Har number/digit ke liye:
+ *   openCount     -> window me kitni baar aaya
+ *   maxContinuous -> sabse lamba lagataar aane ka run
+ *   missingCount  -> latest issue se peeche ginte hue kitne miss (0 = abhi aaya)
+ *   avgMissing    -> (window - openCount) / (openCount + 1)
+ */
+function dwl_trend_stats(string $gameCode, int $window = 100): array
+{
+    $code = dwl_normalize_game($gameCode);
+    $window = max(10, min(100, $window));
+
+    $seq = []; // newest -> oldest, har entry = digits ki list
+    for ($i = 0; $i < $window; $i++) {
+        $issue = dwl_issue_by_offset($code, $i);
+        $result = dwl_result_for_issue($code, $issue, true);
+        $item = dwl_history_item($code, $issue, $result);
+        $number = (string)$item['number'];
+        if (strlen($number) === 1) {
+            $seq[] = [$number];
+            continue;
+        }
+        // K3 / D5 / MotoRace: asli digits `premium` me hote hain (e.g. "4,6,6").
+        $raw = preg_replace('/\D+/', '', (string)$item['premium']);
+        $seq[] = $raw !== '' ? str_split($raw) : [substr($number, -1)];
+    }
+
+    $stats = [];
+    for ($d = 0; $d <= 9; $d++) {
+        $key = (string)$d;
+        $open = 0;
+        $run = 0;
+        $maxRun = 0;
+        foreach ($seq as $digits) {
+            $hits = 0;
+            foreach ($digits as $digit) {
+                if ($digit === $key) {
+                    $hits++;
+                }
+            }
+            $open += $hits;
+            if ($hits > 0) {
+                $run++;
+                if ($run > $maxRun) {
+                    $maxRun = $run;
+                }
+            } else {
+                $run = 0;
+            }
+        }
+        $missing = 0;
+        foreach ($seq as $digits) {
+            if (in_array($key, $digits, true)) {
+                break;
+            }
+            $missing++;
+        }
+        $avg = round(($window - $open) / ($open + 1), 2);
+        $stats[] = [
+            'number' => $key,
+            'numberValue' => $key,
+            'openCount' => $open,
+            'appear' => $open,
+            'maxContinuous' => $maxRun,
+            'missingCount' => $missing,
+            'missing' => $missing,
+            'avgMissing' => $avg,
+        ];
+    }
+
+    return $stats;
+}
+
 /** Bet record row (records page + win/loss popup). */
 function dwl_bet_row(array $r, int $feeRatePercent = 0, float $feeRate = 0.02): array
 {

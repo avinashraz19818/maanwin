@@ -13,7 +13,8 @@ Pehle MaanWin ka lottery engine DhaniWin se alag behave kar raha tha:
   * K3 me jo bet array form me aati thi (["SumOddEven_Odd"]) wo "Array" ban
     kar save hoti thi -> galat result (PHP warning bhi aa rahi thi)
   * payout rates MaanWin ke purane the (Number 9, Color 2.0/1.5, BigSmall 2.0)
-  * webSocketUrl blank tha
+  * GetGameInfo ka webSocketUrl blank tha, aur GetWingoLiveUrl ek galat
+    websocket URL bhej raha tha
   * game list sirf 1 category ki thi (WinGo) — baaki games list me nahi aate the
   * history ka totalPage/totalCount fix 50/500 tha
 
@@ -35,7 +36,20 @@ Ab sab kuch DhaniWin jaisa hai (live dhaniwin.club9.eu.cc se match karke):
       Moto: First/Second/Third Num 9.00, BigSmall/OddEven 2.00
   * GetGameList ab DhaniWin jaisi 5 categories deta hai
       (gameType 100 WinGo · 105 MotoRace · 102 5D · 101 K3 · 103 TrxWinGo)
-  * webSocketUrl = wss://ws-pro.ar-lottery01.com (same AR provider)
+  * GetWingoLiveUrl ab DhaniWin jaisa bilkul khaali jawab deta hai:
+      { "url": "", "isOpen": false }
+    (DhaniWin live par bhi yahi aata hai — us AR provider ka live socket feed
+    band hai, isliye countdown/result humare apne engine se hi aate hain;
+    pehle MaanWin yahan ek websocket URL bhej raha tha jis se frontend
+    "connection" par atak jata tha)
+  * "Record" / bet-detail wala frontend chunk jo 404 de raha tha
+    (js/record-BVIB9KLd.js) wo bhi ab ZIP me hai — ye game page khulte hi
+    console me error deta tha
+  * GetTrendStatistics ab wahi shape deta hai jo aapka frontend padhta hai:
+    10 digits ka array (0-9) jismein har digit ke liye
+    openCount / missingCount / avgMissing / maxContinuous
+    (pehle sirf ek list aati thi jise trend tab render nahi kar pata tha —
+    missing/avg/max wale columns khaali rehte the)
   * GetGameInfo me issue ka pura block (startTime/endTime/issueNumber/
     nextIssueNumber/intervalMinute/seconds/countdown/isLocked/current) bhi
     aa raha hai
@@ -73,7 +87,7 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
 1) cPanel > File Manager > public_html (wahi folder jisme index.html hai).
 2) Purani files ka backup rakh lein (select all > Compress) — optional.
 3) Ye ZIP upload karein aur "Extract" karein -> SAB ko overwrite karne dein.
-   Koi file delete nahi hoti; sirf ye 8 files badalti hain:
+   Koi file delete nahi hoti; sirf ye 10 files badalti hain:
         .htaccess
         api/_router.php
         api/_draw_router.php
@@ -82,19 +96,35 @@ UPLOAD KAISE KAREIN (cPanel) — 2 minute
         api/_core/lottery_dhaniwin.php     (NAYI file)
         api/_core/lottery_engine.php
         admin1/index.php
+        js/record-BVIB9KLd.js              (NAYI file — 404 fix)
+        WINGO-DHANIWIN-PARITY-FIX.txt      (ye hi note file)
 4) Bas. Database import karne ki zaroorat NAHI hai — tables khud ban/repair
    ho jaate hain (naya column `source`, `result_queue` table, index repair).
 
 UPLOAD KE BAAD CHECK
 --------------------
+0) Site kholne se pehle EK BAAR hard refresh karein (Ctrl+Shift+R / mobile par
+   browser data clear) — purana bundle ya service-worker cache warna purani
+   JS hi chalata rehta hai.
 1) Admin > WinGo > "Diagnostics" -> DB = connected, game ka issue/rates dikhe.
 2) Site khol kar WinGo_30S page: countdown chalna chahiye, result list me
    latest number dikhna chahiye, bet lagne par balance turant kam ho aur
    period band hone ke baad win/loss popup + wallet credit aa jaye.
 3) K3 me bhi ek test bet (Odd/Even) — ab sahi record + settle hoga.
+4) WinGo page ka "Trend" (走势) tab: 0-9 wale columns me aane/na aane ki
+   ginti (khali column nahi) dikhni chahiye.
 
-NOTE
-----
+KNOWN COSMETIC (gameplay par koi asar nahi)
+-------------------------------------------
+* assets me 4 animation files khaali (0 byte) padi hain:
+      assets/wingo-DPOnLBH_.svga
+      assets/k3-j5hWp34F.svga
+      assets/D5-1viAL__i.svga
+      assets/trx-DimRhWim.pag
+  Ye 404 error rokne ke liye rakhi gayi placeholder files hain. Inke na hone
+  se sirf background animation nahi chalti — countdown, number, result, bet
+  sab normal kaam karte hain. Aapke paas asli files hon to inhi naam se
+  assets/ me rakh dein, animation bhi chal jayegi.
 * Purane frozen files (webapi/kv/issue/*, MotoRace/*.html) jaisi hain waise
   rakhi gayi hain; naye .htaccess rules unko runtime par override karte hain.
 * `api/error_log` aur `api/_core/bet_debug.log` ZIP me nahi hai (debug files
