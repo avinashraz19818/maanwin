@@ -2,6 +2,19 @@
  MAANWIN — WinGo / K3 / 5D / TrxWinGo / MotoRace  FULL FIX (DhaniWin parity)
 ==========================================================================
 
+SABSE NAYA UPDATE (r9) — STAR particles hataye (sirf confetti)
+----------------------------------------------------------------
+Aapne screenshot me jo white/cream STAR (chamakte sitare) wale particles dikhe
+the — wo hata diye. Ab popup ke saath sirf confetti style particles aate hain
+(gol dots + chhote ribbon/rect pieces, orange-gold-pink-white colors), dhaniwin
+jaisa.
+
+
+Sath hi:
+  * script par cache-buster (?v=9) laga diya hai — isse purani cached copy
+    kabhi nahi chalegi (warna browser purana particles code use kar sakta tha)
+  * particles phir bhi sirf popup khulne par hi aate hain (page load par nahi)
+
 SABSE NAYA UPDATE (r8) — "WIN" TEXT HATAYA + SIRF EK PARTICLE EFFECT
 ---------------------------------------------------------------------
 Aapke screenshot me popup ke upar bada "WIN" likha aa raha tha aur particles

@@ -29,7 +29,7 @@ if ($base === '/' || $base === '.' ) {
     $base = '';
 }
 $baseHref = $base . '/';
-$scriptSrc = $base . '/js/mnw-win-particles.js';
+$scriptSrc = $base . '/js/mnw-win-particles.js?v=9';   // v badhate raho: purani cached copy kabhi na chale
 
 if (stripos($html, '<base ') === false) {
     $baseTag = '<base href="' . htmlspecialchars($baseHref, ENT_QUOTES) . '">';

@@ -1,4 +1,4 @@
-/* maanwin-win-particles: winning popup par dhaniwin jaise particles.
+/* maanwin-win-particles: winning popup par dhaniwin jaise particles (confetti).
    index.php ise har page me load karta hai (defer). Self-contained, koi dependency nahi.
    Sirf tab chalta hai jab popup actually khula ho (v-show display:none se chhupata hai). */
 /* MAANWIN win-popup particles (DhaniWin parity) — self contained, no deps.
@@ -76,23 +76,12 @@
         vr: (Math.random() - 0.5) * 0.34,
         c: COLORS[(Math.random() * COLORS.length) | 0],
         life: 80 + Math.random() * 90,
-        age: 0,
-        star: Math.random() < 0.3
+        age: 0
       });
     }
     if (!raf) raf = requestAnimationFrame(frame);
   }
 
-  function star(g, s) {
-    g.beginPath();
-    for (var i = 0; i < 8; i++) {
-      var rr = i % 2 ? s * 0.36 : s;
-      var a = (i / 8) * 6.283;
-      g[i ? "lineTo" : "moveTo"](Math.cos(a) * rr, Math.sin(a) * rr);
-    }
-    g.closePath();
-    g.fill();
-  }
 
   function frame() {
     raf = 0;
@@ -114,8 +103,7 @@
       ctx.translate(p.x, p.y);
       ctx.rotate(p.r);
       ctx.fillStyle = p.c;
-      if (p.star) star(ctx, p.s * 1.7);
-      else if (p.age % 3 === 0 && p.s > 5) ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+      if (p.age % 3 === 0 || p.s > 5.2) ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
       else { ctx.beginPath(); ctx.arc(0, 0, p.s * 0.55, 0, 6.283); ctx.fill(); }
       ctx.restore();
     }

@@ -75,23 +75,12 @@ import{aw as N,u as S,aJ as v,ak as o,aE as e,aT as $,aM as n,aC as y,D,aO as M,
         vr: (Math.random() - 0.5) * 0.34,
         c: COLORS[(Math.random() * COLORS.length) | 0],
         life: 80 + Math.random() * 90,
-        age: 0,
-        star: Math.random() < 0.3
+        age: 0
       });
     }
     if (!raf) raf = requestAnimationFrame(frame);
   }
 
-  function star(g, s) {
-    g.beginPath();
-    for (var i = 0; i < 8; i++) {
-      var rr = i % 2 ? s * 0.36 : s;
-      var a = (i / 8) * 6.283;
-      g[i ? "lineTo" : "moveTo"](Math.cos(a) * rr, Math.sin(a) * rr);
-    }
-    g.closePath();
-    g.fill();
-  }
 
   function frame() {
     raf = 0;
@@ -113,8 +102,7 @@ import{aw as N,u as S,aJ as v,ak as o,aE as e,aT as $,aM as n,aC as y,D,aO as M,
       ctx.translate(p.x, p.y);
       ctx.rotate(p.r);
       ctx.fillStyle = p.c;
-      if (p.star) star(ctx, p.s * 1.7);
-      else if (p.age % 3 === 0 && p.s > 5) ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+      if (p.age % 3 === 0 || p.s > 5.2) ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
       else { ctx.beginPath(); ctx.arc(0, 0, p.s * 0.55, 0, 6.283); ctx.fill(); }
       ctx.restore();
     }
