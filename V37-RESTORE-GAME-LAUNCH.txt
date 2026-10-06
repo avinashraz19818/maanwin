@@ -1,0 +1,6 @@
+V37 restore:
+- Removed the "Contact your API provider" blocking alert/validation.
+- Restored the previous third-party game launch flow.
+- Restored the original service-worker fallback page.
+- Kept the other V35/V36 fixes unchanged.
+- No SQL change required.

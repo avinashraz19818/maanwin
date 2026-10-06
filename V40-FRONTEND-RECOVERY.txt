@@ -1,0 +1,5 @@
+V40 Frontend Recovery
+- Restored the complete original working JavaScript module graph.
+- Removed stale references to index-D4BxQHrC-v36.js from lazy-loaded chunks.
+- Kept backend API fixes from the later build.
+- Restored original startup files and routing.

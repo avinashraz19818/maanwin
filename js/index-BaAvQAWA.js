@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["js/001-DMURsyhL.js","js/index-B9u3BH9U.js","css/index-DXylt7AE.css","js/common-Cyp7WVjW.js","js/common-DuC3EXKr.js","js/useVip-DqJ9vZKl.js","js/avatar-COhUS_hQ.js","css/001-TGT2-9HU.css"])))=>i.map(i=>d[i]);
+import{T as o,aj as n,ak as t,al as s,c as r,am as _,an as c}from"./index-B9u3BH9U.js";const i={__name:"index",setup(m){const{HomePageConfig:e}=o(),a=r(()=>(e.value,_(()=>c(()=>import("./001-DMURsyhL.js"),__vite__mapDeps([0,1,2,3,4,5,6,7])))));return(l,p)=>(t(),n(s(a.value)))}};export{i as default};

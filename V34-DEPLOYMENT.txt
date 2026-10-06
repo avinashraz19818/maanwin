@@ -1,0 +1,30 @@
+DHANI WIN V34 DEPLOYMENT
+========================
+
+1. Take a complete backup of website files and the current MySQL database.
+2. Import the separately supplied DhaniWin-V34-Database.sql in phpMyAdmin.
+   It uses non-destructive CREATE/UPSERT statements and does not drop user or
+   finance data; the admin seed is intentionally repaired/reset.
+3. Upload and extract DhaniWin-V34-Code.zip into public_html. Opening the site
+   runs the remaining legacy column/index compatibility checks.
+4. Configure DB_HOST, DB_NAME, DB_USER, DB_PASS and a long random APP_SECRET in
+   api/_core/config.php. Use HTTPS and Apache mod_rewrite.
+5. Open /admin/. After the manual V34 SQL import, temporary credentials are:
+      username: admin
+      password: admin123
+   The panel forces a password change immediately.
+6. Configure payment methods, support settings, turnover/withdrawal limits and
+   named operator accounts. Do not leave demo payment data enabled.
+7. JILI, JDB, Aviator/Spribe and other external games require your own official
+   merchant launch URL, merchant ID and callback secret. Put secrets in server
+   environment variables, not the admin form or database.
+8. Provider callback URL: https://YOUR-DOMAIN/api/provider/callback.php
+   Requests must use the configured provider code and HMAC-SHA256 signature.
+9. Clear browser/PWA cache after upload, then verify admin login, 5D/K3/TRX
+    timers, support ticket submission, Earn metrics, wheel and finance queues.
+10. If files were moved through an unusual deployment tool, run
+    `node tools/repair_runtime_assets.js` once before packaging/re-uploading;
+    it only creates aliases from artwork already present in this package.
+
+The project does not use or proxy credentials/private APIs from dhaniwin.org.
+Disabled external providers open a local configuration-status page by design.

@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
+  <title>Game Provider Status · Dhani Win</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 10%,#5730bd,#160b31 62%);color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}.card{width:min(430px,100%);padding:28px;border:1px solid #7d5dcc;background:#281a48;border-radius:24px;box-shadow:0 20px 60px #0008;text-align:center}.mark{width:70px;height:70px;margin:auto;border-radius:22px;display:grid;place-items:center;background:linear-gradient(135deg,#a778ff,#6341df);font-size:25px;font-weight:800}h1{margin:18px 0 6px;font-size:24px}.game{color:#f4c23b;font-weight:700;margin:0 0 18px}.message{line-height:1.55;color:#d9d2e8}.note{font-size:13px;color:#a99dbf}.back{display:block;margin-top:22px;padding:14px;border-radius:999px;background:linear-gradient(#ffd45f,#dfa308);color:#251538;text-decoration:none;font-weight:800}
+  </style>
+</head>
+<body><main class="card"><div class="mark">DW</div><h1 id="provider">Game provider</h1><p class="game" id="game">Game</p><p class="message">This provider has not been connected with official merchant credentials yet.</p><p class="note">Configure its HTTPS launch URL, allowed host and server-side secret in Admin → Game Providers. Local WinGo, K3, 5D and TRX games continue to use the Dhani Win wallet.</p><a class="back" href="/">Back to Dhani Win</a></main><script>const q=new URLSearchParams(location.search);document.getElementById('provider').textContent=(q.get('vendorCode')||'Game')+' provider';document.getElementById('game').textContent=q.get('gameCode')||'Selected game';</script></body>
+</html>

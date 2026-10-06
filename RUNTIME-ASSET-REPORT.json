@@ -1,0 +1,1426 @@
+{
+  "created": [],
+  "existing": [
+    {
+      "target": "/images/home-Dr18OSwO.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/images/home-active-DYmavGzj.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/images/promo-active-DLsFS2G2.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/images/earn-DoS6E8B1.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/images/earn-active-D2ac07dR.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/images/zhuanpan-CKW73-kc.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/images/icon_close-C6KUYQ6l.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/turntable.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/turntable_bg.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/turntable_home.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/start_btn.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/select.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/light_gold.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/common/inviteWheel/money.png",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/common/inviteWheel/money2.webp",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/common/inviteWheel/start.gif",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/common/inviteWheel/animate.gif",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/default-BEVlbu3Q.json",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/open2-dwFRxAro.json",
+      "reason": "active frontend alias"
+    },
+    {
+      "target": "/assets/ar_saas08/share_box.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/ar_saas08/share_coin.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/ar_saas08/share_open1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/ar_saas08/share_open2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/ar_saas08/share_per.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/ar_saas08/share_title.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/box.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/camera.png",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/crown.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/crown2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/depwheel1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/depwheel2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/depwheel3.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/depwheel4.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/earn_leve_0.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/earn_leve_1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/earn_leve_2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/earn_leve_3.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/hotgamebg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/icon_close_blue.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/left_item_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/no_data.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_AG_Electronic.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_AG_Video.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_ARLottery.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_BGAMING.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_CMD.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_CQ9.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_Card365.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_DG.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_EVO_Electronic.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_EVO_Video.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_G9.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_IM.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_INOUT.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_JDB.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_JILI.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_KB.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_KoolBet.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_MG.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_MG_Fish.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_MG_Video.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_PG.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_PP.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_SEXY_Video.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_SPRIBE.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_SaBa.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_TB_Chess.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_TURBO.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_V8Card.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_WM_Video.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/rack_Wickets9.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/right_item_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/top1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/top2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/home/top3.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP0.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP10.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP11.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP12.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP13.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP14.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP15.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP16.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP17.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP18.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP19.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP20.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP3.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP4.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP5.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP6.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP7.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP8.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP9.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_VIP_step.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_ac_confirm.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_act.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_cash_b.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_choose2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_confirm_nor.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_dep_coin.png",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_gold.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_phone.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_ranking_01.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_ranking_02.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_ranking_03.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_service.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/icon_with2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/animate.gif",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/gift_left.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/gift_right.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/icon_left.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/icon_right.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/money.png",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/money2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/rule_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/start.gif",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/inviteWheel/turn_bottom.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/lottery_category.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/need.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/pig.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeTip.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/diamond.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/diamond_icon.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/gold.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/gold_icon.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/pointer.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/recharge_turntable_main_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/silver.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/silver_icon.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/special.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/rechargeWheel/special_icon.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/req_permi_btn.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/service.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/share_box.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/share_open1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/share_open2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/share_per.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/share_title.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/subscript.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history10.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history11.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history3.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history4.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history5.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history6.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history7.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history8.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_history9.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule10.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule11.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule3.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule4.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule5.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule6.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule7.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule8.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/vip_rule9.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/common/wallet.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/92.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/ar_saas08.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/blue.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/darkBlue.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/darkBlue07.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/darkPurple.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/darkPurple.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/darkRed.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/deepOrange.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/deepYellow.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/lightBlue.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/red.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/css/red92.css",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/Subtract.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/activity.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/activity_a.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/barBg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/commissBg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/earn_bet.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/earn_dep.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/earn_inv.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/error/404.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/headMoney.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/banner_split.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/bnt_deposit.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/daily_rewards.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/home_banner.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/home_bg_stripe.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/icon_bank.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/icon_coin.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/icon_message.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/icon_purse.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/icon_successfully.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/info_gift.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/info_recharge.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/info_vip.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/info_withdrawal.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/login_awards.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/notification_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home/wheel1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/home_a.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/icon_m_ruturn.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/icon_success_tip.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/img_loginBG.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/invitationbg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/inviteTurnTable.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/light_gold.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/select.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/start_btn.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/turntable.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/turntable_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/inviteWheel/turntable_home.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/jackpot.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/lottery_category_active.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/main.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/main_a.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/menu.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/menu_a.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/no_ticket.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/nodata.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/processBg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/promotion.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/promotion_a.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ranking.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ranking_a.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/share_coin.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-footer-singnal.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-green-body.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-green-header.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-green-operation.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-green-operation-limit.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-orange-body.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-orange-header.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-orange-operation.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-orange-operation-limit.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-purple-body.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-purple-header.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/ticket/ticket-purple-operation.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/tips_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/title_decoration.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkPurple/turnable_mask.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/box.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/commissBg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/crown.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/crown2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/barBg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/category_game.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/entrance_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/homeIcon_star.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/homeIcon_transparentstar.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/home_enter_character.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/home_enter_flash.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/homebg_guide_left.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/homebg_guide_right.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/homeicon_bet.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/homeicon_chest.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/homeicon_coin.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/homeicon_level.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/hot_post.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/icon_circle.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/icon_message.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/popular_game.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/rack_ARLottery.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/rack_G9.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/rack_INOUT.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/rack_JDB.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/rack_JILI.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/rack_PG.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/rack_SPRIBE.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/rack_TB_Chess.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/top_game.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/topbar_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/topgame1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/topgame2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/topgame3.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/home/turnable_mask.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP0.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP10.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP11.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP12.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP13.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP14.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP15.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP16.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP17.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP18.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP19.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP20.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP3.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP4.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP5.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP6.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP7.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP8.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_VIP9.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_cash_b.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_choose2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_dep_coin.png",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/icon_with2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/img_loginBG.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/animate.gif",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/light_gold.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/light_gold.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/money.png",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/money2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/money2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/select.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/select.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/start.gif",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/start_btn.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/start_btn.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/turntable.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/turntable.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/inviteWheel/turntable_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/light_gold.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/light_gold.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/lottery_category.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/lottery_category_active.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/money2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/money2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/need.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/pig.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/post_banner.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/select.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/select.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/share_box.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/share_coin.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/share_title.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/start_btn.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/start_btn.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/subscript.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/tabbar/icon_earn.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/tabbar/icon_home.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/tabbar/icon_menu.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/tabbar/icon_promo.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/tabbar/tabbar_highlight.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/tabbar/turntable_home.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/trxbg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/turntable.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/turntable.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/vip_history1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/vip_history2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/vip_rule1.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/vip_rule2.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/wallet.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/wingo_bg.webp",
+      "reason": "hash-less theme fallback"
+    },
+    {
+      "target": "/assets/darkRed/workorder_icon.webp",
+      "reason": "hash-less theme fallback"
+    }
+  ],
+  "unresolved": []
+}

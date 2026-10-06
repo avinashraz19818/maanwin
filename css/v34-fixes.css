@@ -1,0 +1,82 @@
+/* Dhani Win V34 compatibility fixes loaded after the compiled theme. */
+
+/* 5D default skin: keep the period and countdown row visible above the drum. */
+.FDTL__C {
+  display: block !important;
+  min-height: 5.28rem !important;
+  padding-top: .32rem !important;
+  overflow: visible !important;
+  background-color: var(--darkBg, #281a48) !important;
+}
+.FDTL__C-l1,
+.FDTL__C-l2 {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 3 !important;
+  color: var(--text_color_L1, #fff) !important;
+}
+.FDTL__C-l1 { min-height: .62rem !important; align-items: center !important; }
+.FDTL__C-l2 { min-height: .82rem !important; align-items: center !important; }
+.FDTL__C-l1 .left,
+.FDTL__C-l2 > div { visibility: visible !important; opacity: 1 !important; }
+.FDTL__C-time { display: flex !important; visibility: visible !important; opacity: 1 !important; }
+.FDTL__C-time > div {
+  display: block !important;
+  min-width: .48rem !important;
+  color: var(--main-color, #f4c23b) !important;
+  background-color: var(--bg_color_L3, #352657) !important;
+}
+.FDTL__C-l3 { margin-top: .24rem !important; }
+
+/* Legacy 5D skin had a mismatched Vue scope id in one compiled stylesheet. */
+.fd_main .bet,
+.fd_main .betTime,
+.fd_main .issue,
+.fd_main .time {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+.fd_main > .bet {
+  min-height: 5.2rem !important;
+  overflow: visible !important;
+}
+.fd_main > .bet > .l1,
+.fd_main > .bet > .play,
+.fd_main > .bet > .betTime {
+  position: relative !important;
+  z-index: 4 !important;
+}
+.fd_main > .bet > .betTime {
+  min-height: .72rem !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Game-duration switcher must remain above the 5D result card. */
+.d5-main [class*="LotteryMenu"],
+.d5-main [class*="lottery-menu"],
+.d5-main > div:first-child {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Keep the existing mobile tab bar above wheel artwork and safe-area insets. */
+.tabbar-container,
+.van-tabbar {
+  z-index: 9999 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+.app_container.bottom { padding-bottom: calc(1.85rem + env(safe-area-inset-bottom, 0px)) !important; }
+
+/* Self-service icons are local SVGs and must never collapse while loading. */
+.customer-service img,
+.work-order img,
+[class*="service"] img[src*="support-service"] {
+  min-width: .72rem;
+  min-height: .72rem;
+  object-fit: contain;
+}

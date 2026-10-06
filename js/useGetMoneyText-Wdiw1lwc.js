@@ -1,0 +1,1 @@
+import{T as s,at as c,l as i,c as l}from"./index-B9u3BH9U.js";function f(){const{currencySign:e}=s(),{giftpackInfo:n}=c(),{t:u}=i();return l(()=>{var t;const a=e.value&&e.value!=="undefined"?e.value:"",o=((t=n.value)==null?void 0:t.invitedWheelTotalPrizeAmount)??0;return`${u("t1350")} ${a}${o}`})}export{f as u};

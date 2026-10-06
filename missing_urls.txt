@@ -1,0 +1,4 @@
+# Optional: yaha DevTools Network se missing file path paste kar sakte ho, one per line.
+# Example:
+# /images/ball_8-BPpYUprp.webp
+# /assets/some-missing-file.webp

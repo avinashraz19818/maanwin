@@ -1,0 +1,10 @@
+V39 RECOVERY BUILD
+
+Restored the original working application boot chain from V34:
+- Original .htaccess DirectoryIndex and SPA fallback
+- Original index.php bootstrap flow
+- Original index.html main bundle reference
+- Original service worker
+- Removed V36 renamed main bundle
+
+The remaining V37 backend fixes are retained. This build specifically removes the API-popup/boot-chain changes that caused the updated packages to fail on shared hosting.

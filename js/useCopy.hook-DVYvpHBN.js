@@ -1,0 +1,1 @@
+import{H as y,z as e}from"./index-B9u3BH9U.js";function l({source:o}={source:void 0}){const{text:s,copy:t,copied:p,isSupported:c}=y({source:o,legacy:!0}),a=e();return{text:s,copy:async n=>{await t(n||(o==null?void 0:o.value)),a.success("copy successful")},copied:p,isSupported:c}}export{l as u};
